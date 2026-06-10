@@ -1,0 +1,194 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:nick_me/assets_helper/app_images.dart';
+import 'package:nick_me/assets_helper/app_colors.dart';
+import 'package:nick_me/assets_helper/app_fonts.dart';
+import 'package:nick_me/feature/profile/widgets/profile_menu_item.dart';
+import 'package:nick_me/helpers/all_routes.dart';
+import 'package:nick_me/helpers/navigation_service.dart';
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(AppImages.splashScreen),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        NavigationService.navigateTo(Routes.editProfileScreen);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10.h),
+                        padding: EdgeInsets.all(8.w),
+                        decoration: BoxDecoration(
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.edit_outlined,
+                          color: AppColor.cFFFFFF,
+                          size: 20.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    width: 100.w,
+                    height: 100.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColor.cFFFFFF.withValues(alpha: 0.1),
+                        width: 4,
+                      ),
+                      image: const DecorationImage(
+                        image: NetworkImage(
+                          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    "Sarah Jenkins",
+                    style: TextFontStyle.textStyle16cFFFFFFInterW600.copyWith(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    "sarah.jenkins@example.com",
+                    style: TextFontStyle.textStyle14cFFFFFFInterW500.copyWith(
+                      color: AppColor.cFFFFFF.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  SizedBox(height: 40.h),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "ACCOUNT & DATA",
+                      style: TextFontStyle.textStyle14cFFFFFFInterW500.copyWith(
+                        color: AppColor.cFFFFFF.withValues(alpha: 0.4),
+                        letterSpacing: 1.5,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColor.c444F5E.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(24.r),
+                      border: Border.all(
+                        color: AppColor.cFFFFFF.withValues(alpha: 0.1),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        ProfileMenuItem(
+                          icon: Icons.shield_outlined,
+                          title: "Privacy Policy",
+                          onTap: () {},
+                        ),
+                        Divider(
+                          height: 1,
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.description_outlined,
+                          title: "Terms & Conditions",
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColor.c444F5E.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(24.r),
+                      border: Border.all(
+                        color: AppColor.cFFFFFF.withValues(alpha: 0.1),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        ProfileMenuItem(
+                          icon: Icons.help_outline,
+                          title: "Help & Support",
+                          onTap: () {},
+                        ),
+                        Divider(
+                          height: 1,
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.delete_outline,
+                          title: "Delete Account",
+                          onTap: () {},
+                        ),
+                        Divider(
+                          height: 1,
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.subject_sharp,
+                          title: "Subscription",
+                          onTap: () {
+                            NavigationService.navigateTo(
+                              Routes.subscriptionScreen,
+                            );
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.logout,
+                          title: "Sign Out",
+                          onTap: () {},
+                          isDestructive: true,
+                          showArrow: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
