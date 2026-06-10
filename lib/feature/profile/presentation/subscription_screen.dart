@@ -155,7 +155,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             children: [
                               Text(
                                 '\$4.99',
-                                style: TextFontStyle 
+                                style: TextFontStyle
                                     .textStyle28cFFFFFFPlayfairW400,
                               ),
                               UIHelper.verticalSpace(8.h),
@@ -177,7 +177,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       NavigationService.navigateTo(Routes.generateWisdomScreen);
                     },
                   ),
-                  UIHelper.verticalSpace(20.h),
                 ],
               ),
             ),
