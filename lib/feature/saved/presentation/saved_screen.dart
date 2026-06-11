@@ -46,9 +46,9 @@ class _SavedScreenState extends State<SavedScreen> {
                       fontSize: 12.sp,
                     ),
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 12.h), 
                   Text(
-                    "Saved Wisdom",
+                    "Saved Stoic Quotes",
                     style: TextFontStyle.textStyle28cFFFFFFPlayfairW400
                         .copyWith(fontSize: 32.sp),
                   ),

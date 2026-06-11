@@ -116,7 +116,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ProfileMenuItem(
                           icon: Icons.shield_outlined,
                           title: "Privacy Policy",
-                          onTap: () {},
+                          onTap: () {
+                            NavigationService.navigateTo(
+                              Routes.privacyPolicyScreen,
+                            );
+                          },
                         ),
                         Divider(
                           height: 1,
@@ -125,7 +129,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ProfileMenuItem(
                           icon: Icons.description_outlined,
                           title: "Terms & Conditions",
-                          onTap: () {},
+                          onTap: () {
+                            NavigationService.navigateTo(
+                              Routes.termsAndConditions,
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -145,7 +153,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ProfileMenuItem(
                           icon: Icons.help_outline,
                           title: "Help & Support",
-                          onTap: () {},
+                          onTap: () {
+                            NavigationService.navigateTo(
+                              Routes.helpAndSupportScreen,
+                            );
+                          },
                         ),
                         Divider(
                           height: 1,

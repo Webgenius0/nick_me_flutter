@@ -7,9 +7,7 @@ import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/assets_helper/app_icons.dart';
 import 'package:nick_me/assets_helper/app_images.dart';
 import 'package:nick_me/common_widgets/custom_app_bar.dart';
-import 'package:nick_me/common_widgets/custom_save_button.dart';
 import 'package:nick_me/feature/profile/widgets/subscription_container_widgets.dart';
-import 'package:nick_me/helpers/all_routes.dart';
 import 'package:nick_me/helpers/navigation_service.dart';
 import 'package:nick_me/helpers/ui_helpers.dart';
 
@@ -116,66 +114,63 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ],
                   ),
                   UIHelper.verticalSpace(32.h),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColor.c444F5E.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: AppColor.cFFFFFF.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Monthly Assess',
-                                style:
-                                    TextFontStyle.textStyle16cFFFFFFInterW400,
-                              ),
-                              UIHelper.verticalSpace(8.h),
-                              Text(
-                                '7-day free trial included',
-                                style: TextFontStyle.textStyle12interW400,
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '\$4.99',
-                                style: TextFontStyle
-                                    .textStyle28cFFFFFFPlayfairW400,
-                              ),
-                              UIHelper.verticalSpace(8.h),
-                              Text(
-                                '7 month',
-                                style: TextFontStyle.textStyle12interW400,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  UIHelper.verticalSpace(24.h),
-
-                  CustomSaveButton(
-                    btnText: "Subscribe & Reveal Answer",
-                    onCall: () {
-                      NavigationService.navigateTo(Routes.generateWisdomScreen);
+                  GestureDetector(
+                    onTap: () {
+                      // NavigationService.navigateTo(Routes.subscriptionScreen);
                     },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColor.c444F5E.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Monthly Assess',
+                                  style:
+                                      TextFontStyle.textStyle16cFFFFFFInterW400,
+                                ),
+                                UIHelper.verticalSpace(8.h),
+                                Text(
+                                  '7-day free trial included',
+                                  style: TextFontStyle.textStyle12interW400,
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '\$4.99',
+                                  style: TextFontStyle
+                                      .textStyle28cFFFFFFPlayfairW400,
+                                ),
+                                UIHelper.verticalSpace(8.h),
+                                Text(
+                                  '7 month',
+                                  style: TextFontStyle.textStyle12interW400,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

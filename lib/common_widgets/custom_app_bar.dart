@@ -7,8 +7,9 @@ import 'package:nick_me/helpers/navigation_service.dart';
 class CustomAppBar extends StatelessWidget {
   final Widget? trailing;
   final VoidCallback? onBack;
+  final String? title;
 
-  const CustomAppBar({super.key, this.trailing, this.onBack});
+  const CustomAppBar({super.key, this.trailing, this.onBack, this.title});
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,10 @@ import 'package:nick_me/feature/auth/presentation/otp_verify_screen.dart';
 import 'package:nick_me/feature/auth/presentation/set_new_password_screen.dart';
 import 'package:nick_me/feature/home/presentation/generate_wisdom_screen.dart';
 import 'package:nick_me/feature/profile/presentation/edit_profile_screen.dart';
+import 'package:nick_me/feature/profile/presentation/help_and_support_screen.dart';
+import 'package:nick_me/feature/profile/presentation/privacy_policy_screen.dart';
 import 'package:nick_me/feature/profile/presentation/subscription_screen.dart';
+import 'package:nick_me/feature/profile/presentation/terms_and_conditions.dart';
 import 'package:nick_me/navigation_screen.dart';
 
 final class Routes {
@@ -26,6 +29,9 @@ final class Routes {
   static const String generateWisdomScreen = '/generateWisdomScreen';
   static const String editProfileScreen = '/editProfileScreen';
   static const String subscriptionScreen = '/subscriptionScreen';
+  static const String privacyPolicyScreen = '/privacyPolicyScreen';
+  static const String termsAndConditions = '/termsAndConditions';
+  static const String helpAndSupportScreen = '/helpAndSupportScreen';
 }
 
 final class RouteGenerator {
@@ -113,6 +119,30 @@ final class RouteGenerator {
                 settings: settings,
               )
             : CupertinoPageRoute(builder: (context) => SubscriptionScreen());
+
+      case Routes.privacyPolicyScreen:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: PrivacyPolicyScreen(),
+                settings: settings,
+              )
+            : CupertinoPageRoute(builder: (context) => PrivacyPolicyScreen());
+
+      case Routes.termsAndConditions:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: TermsAndConditions(),
+                settings: settings,
+              )
+            : CupertinoPageRoute(builder: (context) => TermsAndConditions());
+
+      case Routes.helpAndSupportScreen:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: HelpAndSupportScreen(),
+                settings: settings,
+              )
+            : CupertinoPageRoute(builder: (context) => HelpAndSupportScreen());
 
       // case Routes.applicationDetailsHistoryScreen:
       //   final item = settings.arguments as VerificationRequest;
