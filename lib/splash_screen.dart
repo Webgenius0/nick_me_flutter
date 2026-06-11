@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Stoic Wisdom',
+                'Ask The Stoics',
                 style: TextFontStyle.textStyle30UrbanistW500,
               ),
             ],

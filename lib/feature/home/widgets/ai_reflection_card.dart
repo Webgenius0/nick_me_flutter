@@ -24,7 +24,7 @@ class AiReflectionCard extends StatelessWidget {
         // color: AppColor.cFFFFFF.withValues(alpha: 0.08),
         gradient: LinearGradient(
           colors: [
-            AppColor.c444F5E.withValues(alpha: 0.9), 
+            AppColor.c444F5E.withValues(alpha: 0.9),
             AppColor.c0B0D10.withValues(alpha: 0.3),
           ],
           begin: Alignment.topCenter,
@@ -45,21 +45,9 @@ class AiReflectionCard extends StatelessWidget {
               ),
               SizedBox(width: 12.w),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "AI Reflection",
-                      style: TextFontStyle.textStyle16cFFFFFFInterW600,
-                    ),
-                    Text(
-                      "Context from antiquity",
-                      style: TextFontStyle.textStyle14cFFFFFFInterW500.copyWith(
-                        color: AppColor.cFFFFFF.withValues(alpha: 0.3),
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  "AI Reflection",
+                  style: TextFontStyle.textStyle16cFFFFFFInterW600,
                 ),
               ),
               Switch(

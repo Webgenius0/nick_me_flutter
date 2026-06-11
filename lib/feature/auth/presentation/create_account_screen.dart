@@ -23,6 +23,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
   bool rememberme = false;
+  bool dailyreminders = false;
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -149,7 +150,44 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 ),
                               ],
                             ),
+                            UIHelper.verticalSpace(16.h),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () => setState(() {
+                                    dailyreminders = !dailyreminders;
+                                  }),
+                                  child: Container(
+                                    height: 16.h,
+                                    width: 18.w,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3.r),
+                                      border: Border.all(
+                                        color: AppColor.c8896AC,
+                                      ),
+                                    ),
+                                    child: Visibility(
+                                      visible: dailyreminders,
+                                      child: Icon(
+                                        Icons.check,
+                                        size: 16,
+                                        color: AppColor.c8896AC,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                UIHelper.horizontalSpace(12.w),
+                                Text(
+                                  'Daily reminders',
+                                  style: TextFontStyle.textStyle14cA8A8A8W500
+                                      .copyWith(fontSize: 14.sp),
+                                  overflow: TextOverflow.visible,
+                                  maxLines: 2,
+                                ),
+                              ],
+                            ),
 
+                            // UIHelper.verticalSpace(50.h),
                             Spacer(),
 
                             Center(

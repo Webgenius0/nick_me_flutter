@@ -1,4 +1,4 @@
-package com.example.nick_me
+package com.AskTheStoics.app
 
 import io.flutter.embedding.android.FlutterActivity
 
