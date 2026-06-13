@@ -156,9 +156,34 @@ class _OtpVerifyForgetPassScreenState extends State<OtpVerifyForgetPassScreen> {
                                         ),
                                       ),
                                 ),
-                                Text(
-                                  "Resend Code",
-                                  style: TextFontStyle.textStyle14cA8A8A8W500,
+                                GestureDetector(
+                                  onTap: () async {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) =>
+                                          loadingIndicatorCircle(
+                                            context: context,
+                                          ),
+                                    );
+                                    bool resetSuccess = await getResendOtpRxObj
+                                        .resetOtp(email: email);
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pop();
+                                    if (resetSuccess) {
+                                    } else {
+                                      ToastUtil.showShortToast(
+                                        getResendOtpRxObj.errorMessage ??
+                                            'Reset failed',
+                                      );
+                                    }
+                                  },
+                                  child: Text(
+                                    "Resend Code",
+                                    style: TextFontStyle.textStyle14cA8A8A8W500,
+                                  ),
                                 ),
                               ],
                             ),

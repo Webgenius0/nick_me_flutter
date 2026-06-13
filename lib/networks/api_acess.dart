@@ -1,6 +1,7 @@
 import 'package:nick_me/feature/auth/data/forget_password/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_login/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_logout/rx.dart';
+import 'package:nick_me/feature/auth/data/rx_resend_otp/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_reset_password/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_signup/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_otp_verify_signup/rx.dart';
@@ -24,6 +25,10 @@ ForgetPasswodRx getForgetPasswodRxObj = ForgetPasswodRx(
   dataFetcher: BehaviorSubject<Map>(),
 );
 ResetPassRX getResetPassRXObj = ResetPassRX(
+  empty: {},
+  dataFetcher: BehaviorSubject<Map>(),
+);
+ResendOtpRx getResendOtpRxObj = ResendOtpRx(
   empty: {},
   dataFetcher: BehaviorSubject<Map>(),
 );
