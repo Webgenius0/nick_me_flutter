@@ -55,12 +55,21 @@ final class RouteGenerator {
             : CupertinoPageRoute(builder: (context) => CreateAccountScreen());
 
       case Routes.otpVerifyScreen:
+        final args = settings.arguments as Map? ?? {};
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: OtpVerifyScreen(),
+                widget: OtpVerifyScreen(
+                  email: args['email'],
+                  otpToken: args['otp_token'],
+                ),
                 settings: settings,
               )
-            : CupertinoPageRoute(builder: (context) => OtpVerifyScreen());
+            : CupertinoPageRoute(
+                builder: (context) => OtpVerifyScreen( 
+                  email: args['email'],
+                  otpToken: args['otp_token'],
+                ),
+              );
 
       case Routes.forgetPasswordScreen:
         return Platform.isAndroid

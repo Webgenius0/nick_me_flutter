@@ -17,7 +17,7 @@ final class SignUpRX extends RxResponseInt<Map> {
 
   ValueStream get getFileData => dataFetcher.stream;
 
-  Future<bool> signupRx({
+  Future<String?> signupRx({
     required String name,
     required String email,
     required String password,
@@ -35,10 +35,11 @@ final class SignUpRX extends RxResponseInt<Map> {
         termsAndConditions: termsAndConditions,
       );
       handleSuccessWithReturn(data);
-      return true;
+      return data['data']?['otp_token'] ?? data['otp_token'];
     } catch (error) {
       log('Error catch is here : ${error.toString()}');
-      return handleErrorWithReturn(error);
+      handleErrorWithReturn(error);
+      return null;
     }
   }
 

@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:nick_me/feature/auth/data/rx_otp_verify_signup/api.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:nick_me/constants/update_customer.dart';
+import 'package:nick_me/helpers/di.dart';
+import 'package:nick_me/networks/dio/dio.dart';
+import 'package:nick_me/networks/stream_cleaner.dart';
 import '../../../../../../networks/rx_base.dart';
 
 final class EmailVerifySignUpRx extends RxResponseInt<Map> {
@@ -31,17 +35,13 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
 
   @override
   handleSuccessWithReturn(data) async {
-    // totalDataClean();
-    // String? accessToken = data['token'];
-    // String? role = data["data"]["role"];
+    await totalDataClean();
+    String? accessToken = data['data']?['access_token'] ?? data['access_token'];
+    await appData.write(kKeyIsLoggedIn, true);
+    await appData.write(kKeyAccessToken, accessToken);
 
-    // appData.write(kKeyIsLoggedIn, true);
-    // appData.write(kKeyAccessToken, accessToken);
-    // appData.write(kKeyRole, role);
-
-    // DioSingleton.instance.update(accessToken);
-    // ToastUtil.showShortToast('Here role: $role');
-    // dataFetcher.sink.add(data);
+    DioSingleton.instance.update(accessToken);
+    dataFetcher.sink.add(data);
     return data;
   }
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:get/get_connect/http/src/multipart/form_data.dart';
-import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:dio/dio.dart';
 import 'package:nick_me/helpers/toast.dart';
+import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/exception_handler/data_source.dart';
 
 import '/networks/endpoints.dart';

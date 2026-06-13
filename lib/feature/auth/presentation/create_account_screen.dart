@@ -245,27 +245,30 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           ),
                                     );
 
-                                    bool signUpSuccess = await getSignUpRXObj
-                                        .signupRx(
-                                          name: nameController.text.trim(),
-                                          email: emailController.text.trim(),
-                                          password: passwordController.text
-                                              .trim(),
-                                          confPassword:
-                                              confirmPasswordController.text
-                                                  .trim(),
-                                          dailyReminders: dailyreminders,
-                                          termsAndConditions: rememberme,
-                                        );
+                                    String?
+                                    otpToken = await getSignUpRXObj.signupRx(
+                                      name: nameController.text.trim(),
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text.trim(),
+                                      confPassword: confirmPasswordController
+                                          .text
+                                          .trim(),
+                                      dailyReminders: dailyreminders,
+                                      termsAndConditions: rememberme,
+                                    );
 
                                     Navigator.of(
                                       context,
                                       rootNavigator: true,
                                     ).pop();
 
-                                    if (signUpSuccess) {
-                                      NavigationService.navigateTo(
+                                    if (otpToken != null) {
+                                      NavigationService.navigateToWithArgs(
                                         Routes.otpVerifyScreen,
+                                        {
+                                          'email': emailController.text.trim(),
+                                          'otp_token': otpToken,
+                                        },
                                       );
                                     } else {
                                       ToastUtil.showShortToast(
@@ -278,7 +281,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               ),
                               UIHelper.verticalSpace(24.h),
 
-                              // UIHelper.verticalSpace(50.h),
                               Spacer(),
 
                               Center(
