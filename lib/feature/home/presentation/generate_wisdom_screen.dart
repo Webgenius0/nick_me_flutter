@@ -52,7 +52,7 @@ class _GenerateWisdomScreenState extends State<GenerateWisdomScreen> {
                       quote:
                           "It is not the man who has too little that is poor, but the man who hankers after more.",
                       author: "Seneca",
-                      source: "Letters to Lucilius, Book -5",
+                      source: "Seneca, Letters to Lucilius 13.4",
                     ),
                     SizedBox(height: 20.h),
                     AiReflectionCard(

@@ -7,6 +7,8 @@ import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/feature/profile/widgets/profile_menu_item.dart';
 import 'package:nick_me/helpers/all_routes.dart';
 import 'package:nick_me/helpers/navigation_service.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -188,7 +190,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ProfileMenuItem(
                           icon: Icons.logout,
                           title: "Sign Out",
-                          onTap: () {},
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                backgroundColor: AppColor.c0E1116,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  side: BorderSide(
+                                    color: AppColor.cFFFFFF.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  "Sign Out",
+                                  style: TextFontStyle
+                                      .textStyle16cFFFFFFInterW600
+                                      .copyWith(fontSize: 20.sp),
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: Text(
+                                  "Are you sure you want to sign out?",
+                                  style: TextFontStyle
+                                      .textStyle14cFFFFFFInterW500
+                                      .copyWith(
+                                        color: AppColor.cFFFFFF.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                actionsAlignment: MainAxisAlignment.spaceEvenly,
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(dialogContext).pop(),
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextFontStyle
+                                          .textStyle14cFFFFFFInterW500
+                                          .copyWith(
+                                            color: AppColor.cFFFFFF.withValues(
+                                              alpha: 0.5,
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (loadingContext) =>
+                                            loadingIndicatorCircle(
+                                              context: loadingContext,
+                                            ),
+                                      );
+                                      bool logoutSuccess = await getLogoutRxObj
+                                          .logout();
+
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pop();
+
+                                      Navigator.of(dialogContext).pop();
+
+                                      if (logoutSuccess) {
+                                        NavigationService.navigateToUntilReplacement(
+                                          Routes.loginScreen,
+                                        );
+                                      }
+                                    },
+                                    child: Text(
+                                      "Yes, Sign Out",
+                                      style: TextFontStyle
+                                          .textStyle14cFFFFFFInterW500
+                                          .copyWith(color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                           isDestructive: true,
                           showArrow: false,
                         ),

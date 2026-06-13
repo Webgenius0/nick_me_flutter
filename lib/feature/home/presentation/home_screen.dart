@@ -98,26 +98,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "GOOD AFTERNOON",
-                        style: TextFontStyle.textStyle14cFFFFFFInterW500
-                            .copyWith(
-                              color: AppColor.cFFFFFF.withValues(alpha: 0.5),
-                              letterSpacing: 2.0,
-                            ),
-                      ),
-                      CircleAvatar(
-                        radius: 20.r,
-                        backgroundImage: const NetworkImage(
-                          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30.h),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Text(
+                  //       "GOOD AFTERNOON",
+                  //       style: TextFontStyle.textStyle14cFFFFFFInterW500
+                  //           .copyWith(
+                  //             color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                  //             letterSpacing: 2.0,
+                  //           ),
+                  //     ),
+                  //     CircleAvatar(
+                  //       radius: 20.r,
+                  //       backgroundImage: const NetworkImage(
+                  //         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // SizedBox(height: 30.h),
                   Wrap(
                     spacing: 12.w,
                     runSpacing: 16.h,
