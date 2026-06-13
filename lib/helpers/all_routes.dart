@@ -55,12 +55,21 @@ final class RouteGenerator {
             : CupertinoPageRoute(builder: (context) => CreateAccountScreen());
 
       case Routes.otpVerifyScreen:
+        final args = settings.arguments as Map? ?? {};
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: OtpVerifyScreen(),
+                widget: OtpVerifyScreen(
+                  email: args['email'],
+                  otpToken: args['otp_token'],
+                ),
                 settings: settings,
               )
-            : CupertinoPageRoute(builder: (context) => OtpVerifyScreen());
+            : CupertinoPageRoute(
+                builder: (context) => OtpVerifyScreen(
+                  email: args['email'],
+                  otpToken: args['otp_token'],
+                ),
+              );
 
       case Routes.forgetPasswordScreen:
         return Platform.isAndroid
@@ -71,22 +80,38 @@ final class RouteGenerator {
             : CupertinoPageRoute(builder: (context) => ForgetPasswordScreen());
 
       case Routes.otpVerifyForgetPassScreen:
+        final args = settings.arguments as Map? ?? {};
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: OtpVerifyForgetPassScreen(),
+                widget: OtpVerifyForgetPassScreen(
+                  email: args['email'],
+                  otpToken: args['otp_token'],
+                ),
                 settings: settings,
               )
             : CupertinoPageRoute(
-                builder: (context) => OtpVerifyForgetPassScreen(),
+                builder: (context) => OtpVerifyForgetPassScreen(
+                  email: args['email'],
+                  otpToken: args['otp_token'],
+                ),
               );
 
       case Routes.setNewPasswordScreen:
+        final args = settings.arguments as Map? ?? {};
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: SetNewPasswordScreen(),
+                widget: SetNewPasswordScreen(
+                  email: args['email'],
+                  otpToken: args['reset_token'],
+                ),
                 settings: settings,
               )
-            : CupertinoPageRoute(builder: (context) => SetNewPasswordScreen());
+            : CupertinoPageRoute(
+                builder: (context) => SetNewPasswordScreen(
+                  email: args['email'],
+                  otpToken: args['reset_token'],
+                ),
+              );
 
       case Routes.navigationScreen:
         return Platform.isAndroid

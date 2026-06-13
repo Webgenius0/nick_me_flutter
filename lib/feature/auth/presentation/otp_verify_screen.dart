@@ -6,20 +6,39 @@ import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/assets_helper/app_images.dart';
 import 'package:nick_me/common_widgets/custom_save_button.dart';
 import 'package:nick_me/helpers/ui_helpers.dart';
+import 'package:nick_me/helpers/all_routes.dart';
+import 'package:nick_me/helpers/navigation_service.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
+import 'package:nick_me/helpers/toast.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
-  const OtpVerifyScreen({super.key});
+  final String? email;
+  final String? otpToken;
+
+  const OtpVerifyScreen({super.key, this.email, this.otpToken});
+
   @override
   State<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
 }
 
 class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
-  //  Create 5 OTP controllers
+  // Create 4 OTP controllers
   final List<TextEditingController> otpControllers = List.generate(
     4,
     (_) => TextEditingController(),
   );
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+
+  String email = '';
+  String otpToken = '';
+
+  @override
+  void initState() {
+    super.initState();
+    email = widget.email ?? '';
+    otpToken = widget.otpToken ?? '';
+  }
 
   // Combine all 4 boxes into one OTP string
   String getOtp() {
@@ -30,6 +49,17 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     if (value.isNotEmpty && index < otpControllers.length - 1) {
       FocusScope.of(context).requestFocus(focusNodes[index + 1]);
     }
+  }
+
+  @override
+  void dispose() {
+    for (var controller in otpControllers) {
+      controller.dispose();
+    }
+    for (var node in focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -49,7 +79,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           ),
           child: SafeArea(
             child: LayoutBuilder(
-              builder: (context, constraints) {
+              builder: (_, constraints) {
                 return SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -136,9 +166,40 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                         ),
                                       ),
                                 ),
-                                Text(
-                                  "Resend Code",
-                                  style: TextFontStyle.textStyle14cA8A8A8W500,
+                                GestureDetector(
+                                  onTap: () async {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) =>
+                                          loadingIndicatorCircle(
+                                            context: context,
+                                          ),
+                                    );
+                                    final resendOtpToken =
+                                        await getResendOtpRxObj.resetOtp(
+                                          email: email,
+                                        );
+                                    if (!context.mounted) return;
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pop();
+                                    if (resendOtpToken != null) {
+                                      setState(() {
+                                        otpToken = resendOtpToken;
+                                      });
+                                    } else {
+                                      ToastUtil.showShortToast(
+                                        getResendOtpRxObj.errorMessage ??
+                                            'Reset failed',
+                                      );
+                                    }
+                                  },
+                                  child: Text(
+                                    "Resend Code",
+                                    style: TextFontStyle.textStyle14cA8A8A8W500,
+                                  ),
                                 ),
                               ],
                             ),
@@ -149,9 +210,52 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                 style: TextFontStyle.textStyle14cA8A8A8W500,
                               ),
                             ),
-
                             UIHelper.verticalSpace(40.h),
-                            CustomSaveButton(btnText: 'Verify'),
+                            CustomSaveButton(
+                              btnText: 'Verify',
+                              onCall: () async {
+                                final otp = getOtp();
+                                if (otp.length < 4) {
+                                  ToastUtil.showShortToast(
+                                    "Please enter complete OTP",
+                                  );
+                                  return;
+                                }
+
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      loadingIndicatorCircle(context: context),
+                                );
+
+                                String? signupToken =
+                                    await getEmailVerifySignUpRxObj
+                                        .emailVerifySignup(
+                                          email: email,
+                                          otp: otp,
+                                          otpToken: otpToken,
+                                        );
+
+                                if (!context.mounted) return;
+
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pop();
+
+                                if (signupToken != null) {
+                                  NavigationService.navigateToUntilReplacement(
+                                    Routes.navigationScreen,
+                                  );
+                                } else {
+                                  ToastUtil.showShortToast(
+                                    getEmailVerifySignUpRxObj.errorMessage ??
+                                        'Verification failed',
+                                  );
+                                }
+                              },
+                            ),
                           ],
                         ),
                       ),

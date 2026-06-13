@@ -5,10 +5,17 @@ import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/assets_helper/app_images.dart';
 import 'package:nick_me/common_widgets/custom_save_button.dart';
 import 'package:nick_me/common_widgets/custom_text_from_field.dart';
+import 'package:nick_me/helpers/all_routes.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
+import 'package:nick_me/helpers/navigation_service.dart';
+import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/helpers/ui_helpers.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 class SetNewPasswordScreen extends StatefulWidget {
-  const SetNewPasswordScreen({super.key});
+  final String? email;
+  final String? otpToken;
+  const SetNewPasswordScreen({super.key, this.email, this.otpToken});
   @override
   State<SetNewPasswordScreen> createState() => _SetNewPasswordScreenState();
 }
@@ -17,6 +24,7 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -34,52 +42,105 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
           ),
           child: SafeArea(
             child: LayoutBuilder(
-              builder: (context, constraints) {
+              builder: (_, constraints) {
                 return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            UIHelper.verticalSpace(80.h),
-                            Center(
-                              child: Text(
-                                'Set new password',
-                                style:
-                                    TextFontStyle.textStyle24SpaceGroteskW700,
+                  child: Form(
+                    key: _formKey,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              UIHelper.verticalSpace(80.h),
+                              // Text(widget.otpToken ?? ''),
+                              Center(
+                                child: Text(
+                                  'Set new password',
+                                  style:
+                                      TextFontStyle.textStyle24SpaceGroteskW700,
+                                ),
                               ),
-                            ),
-                            UIHelper.verticalSpace(89.h),
+                              UIHelper.verticalSpace(89.h),
 
-                            Text(
-                              'PASSWORD',
-                              style: TextFontStyle.textStyle14cA8A8A8W500,
-                            ),
-                            CustomTextFormField(
-                              hintText: 'Enter your password',
-                              isPassword: true,
-                              controller: passwordController,
-                            ),
-                            UIHelper.verticalSpace(24.h),
+                              Text(
+                                'PASSWORD',
+                                style: TextFontStyle.textStyle14cA8A8A8W500,
+                              ),
+                              CustomTextFormField(
+                                hintText: 'Enter your password',
+                                isPassword: true,
+                                controller: passwordController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your password';
+                                  } else if (value.length < 8) {
+                                    return 'Password must be at least 6 characters';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              UIHelper.verticalSpace(24.h),
 
-                            Text(
-                              'CONFIRM PASSWORD',
-                              style: TextFontStyle.textStyle14cA8A8A8W500,
-                            ),
-                            CustomTextFormField(
-                              hintText: 'Enter your confirm password',
-                              isPassword: true,
-                              controller: confirmPasswordController,
-                            ),
+                              Text(
+                                'CONFIRM PASSWORD',
+                                style: TextFontStyle.textStyle14cA8A8A8W500,
+                              ),
+                              CustomTextFormField(
+                                hintText: 'Enter your confirm password',
+                                isPassword: true,
+                                controller: confirmPasswordController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your confirm password';
+                                  } else if (value != passwordController.text) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
+                                },
+                              ),
 
-                            UIHelper.verticalSpace(40.h),
-                            CustomSaveButton(btnText: 'Continue'),
-                          ],
+                              UIHelper.verticalSpace(40.h),
+
+                              CustomSaveButton(
+                                btnText: 'Continue',
+                                onCall: () async {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) =>
+                                        loadingIndicatorCircle(
+                                          context: context,
+                                        ),
+                                  );
+                                  bool response = await getResetPassRXObj
+                                      .resetPass(
+                                        email: widget.email ?? '',
+                                        password: passwordController.text,
+                                        confPassword:
+                                            confirmPasswordController.text,
+                                        resetToken: widget.otpToken ?? '',
+                                      );
+                                  if (!context.mounted) return;
+                                  Navigator.pop(context);
+                                  if (response) {
+                                    NavigationService.navigateTo(
+                                      Routes.loginScreen,
+                                    );
+                                  } else {
+                                    ToastUtil.showShortToast(
+                                      getResetPassRXObj.errorMessage ??
+                                          'Verification failed',
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

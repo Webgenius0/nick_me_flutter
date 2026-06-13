@@ -7,9 +7,12 @@ import 'package:nick_me/assets_helper/app_images.dart';
 import 'package:nick_me/common_widgets/custom_save_button.dart';
 import 'package:nick_me/common_widgets/custom_text_from_field.dart';
 import 'package:nick_me/helpers/all_routes.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
 import 'package:nick_me/helpers/navigation_service.dart';
 
+import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/helpers/ui_helpers.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -19,6 +22,7 @@ class ForgetPasswordScreen extends StatefulWidget {
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,54 +41,103 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           ),
           child: SafeArea(
             child: LayoutBuilder(
-              builder: (context, constraints) {
+              builder: (_, constraints) {
                 return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            UIHelper.verticalSpace(80.h),
-                            Center(
-                              child: Text(
-                                'Enter your Email',
-                                style:
-                                    TextFontStyle.textStyle24SpaceGroteskW700,
+                  child: Form(
+                    key: _formKey,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              UIHelper.verticalSpace(80.h),
+                              Center(
+                                child: Text(
+                                  'Enter your Email',
+                                  style:
+                                      TextFontStyle.textStyle24SpaceGroteskW700,
+                                ),
                               ),
-                            ),
-                            UIHelper.verticalSpace(16.h),
-                            Center(
-                              child: Text(
-                                'we‘ll send you a verification code ',
-                                style: TextFontStyle.textStyle14cA8A8A8W500
-                                    .copyWith(
-                                      color: AppColor.cFFFFFF.withValues(
-                                        alpha: 0.5,
+                              UIHelper.verticalSpace(16.h),
+                              Center(
+                                child: Text(
+                                  'we‘ll send you a verification code ',
+                                  style: TextFontStyle.textStyle14cA8A8A8W500
+                                      .copyWith(
+                                        color: AppColor.cFFFFFF.withValues(
+                                          alpha: 0.5,
+                                        ),
                                       ),
-                                    ),
-                                textAlign: TextAlign.center,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ),
-                            UIHelper.verticalSpace(32.h),
-                            Text(
-                              'EMAIL ADDRESS',
-                              style: TextFontStyle.textStyle14cA8A8A8W500,
-                            ),
-                            CustomTextFormField(
-                              hintText: 'Enter your email',
-                              controller: emailController,
-                            ),
-                            UIHelper.verticalSpace(36.h),
+                              UIHelper.verticalSpace(32.h),
+                              Text(
+                                'EMAIL ADDRESS',
+                                style: TextFontStyle.textStyle14cA8A8A8W500,
+                              ),
+                              CustomTextFormField(
+                                hintText: 'Enter your email',
+                                controller: emailController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Email cannot be empty';
+                                  }
+                                  if (!RegExp(
+                                    r'^[^@]+@[^@]+\.[^@]+',
+                                  ).hasMatch(value)) {
+                                    return 'Please enter a valid email address';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                              UIHelper.verticalSpace(36.h),
 
-                            CustomSaveButton(btnText: 'Send Code',onCall: () {
-                              NavigationService.navigateTo(Routes.otpVerifyForgetPassScreen);
-                            },),
-                          ],
+                              CustomSaveButton(
+                                btnText: 'Send Code',
+                                onCall: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) =>
+                                          loadingIndicatorCircle(
+                                            context: context,
+                                          ),
+                                    );
+                                    final otpToken = await getForgetPasswodRxObj
+                                        .forgetPass(
+                                          email: emailController.text.trim(),
+                                        );
+
+                                    if (!context.mounted) return;
+                                    Navigator.of(context).pop();
+
+                                    if (otpToken != null) {
+                                      NavigationService.navigateToWithArgs(
+                                        Routes.otpVerifyForgetPassScreen,
+                                        {
+                                          'email': emailController.text.trim(),
+                                          'otp_token': otpToken,
+                                        },
+                                      );
+                                    } else {
+                                      ToastUtil.showShortToast(
+                                        getForgetPasswodRxObj.errorMessage ??
+                                            'Failed to send verification code',
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
