@@ -57,7 +57,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   width: 1.w,
                 ),
                 boxShadow: [
-                  BoxShadow( 
+                  BoxShadow(
                     color: Colors.black.withValues(alpha: 0.45),
                     blurRadius: 20,
                     spreadRadius: 2,
@@ -82,13 +82,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     GButton(
                       padding: EdgeInsets.all(12.0),
                       margin: EdgeInsets.all(8.0),
-                      leading: SvgPicture.asset(
-                        AppIcons.home,
-                        color: _currentIndex == 0
-                            ? AppColor.cFFFFFF
-                            : AppColor.c555555,
-                        height: 20.h,
-                        width: 20.w,
+                      leading: Padding(
+                        padding: EdgeInsets.only(left: 6.h),
+                        child: SvgPicture.asset(
+                          AppIcons.home,
+                          color: _currentIndex == 0
+                              ? AppColor.cFFFFFF
+                              : AppColor.c5A6478,
+                          height: 20.h,
+                          width: 20.w,
+                        ),
                       ),
                       icon: Icons.home,
                       text: 'Home',
@@ -100,7 +103,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         AppIcons.star,
                         color: _currentIndex == 1
                             ? AppColor.cFFFFFF
-                            : AppColor.c555555,
+                            : AppColor.c5A6478,
                         height: 20.h,
                         width: 20.w,
                       ),
@@ -110,13 +113,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     GButton(
                       padding: EdgeInsets.all(12.0),
                       margin: EdgeInsets.all(12.0),
-                      leading: SvgPicture.asset(
-                        AppIcons.profile,
-                        color: _currentIndex == 2
-                            ? AppColor.cFFFFFF
-                            : AppColor.c555555,
-                        height: 20.h,
-                        width: 20.w,
+                      leading: Padding(
+                        padding: EdgeInsets.only(right: 6.h),
+                        child: SvgPicture.asset(
+                          AppIcons.profile,
+                          color: _currentIndex == 2
+                              ? AppColor.cFFFFFF
+                              : AppColor.c5A6478,
+                          height: 20.h,
+                          width: 20.w,
+                        ),
                       ),
                       icon: Icons.home,
                       text: 'Profile',
