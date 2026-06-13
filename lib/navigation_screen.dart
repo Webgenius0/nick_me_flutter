@@ -1,4 +1,4 @@
- // ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -47,64 +47,82 @@ class _NavigationScreenState extends State<NavigationScreen> {
         body: IndexedStack(index: _currentIndex, children: _screens),
         bottomNavigationBar: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 10.h),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32.r),
-              child: GNav(
-                activeColor: AppColor.cFFFFFF,
-                tabBackgroundColor: AppColor.cFFFFFF.withValues(alpha: 0.11),
-                gap: 8,
-                backgroundColor: AppColor.c0E1116.withValues(alpha: 0.4),
-                selectedIndex: _currentIndex,
-                onTabChange: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                tabs: [
-                  GButton(
-                    padding: EdgeInsets.all(12.0),
-                    margin: EdgeInsets.all(8.0),
-                    leading: SvgPicture.asset(
-                      AppIcons.home,
-                      color: _currentIndex == 0
-                          ? AppColor.cFFFFFF
-                          : AppColor.c555555,
-                      height: 20.h,
-                      width: 20.w,
-                    ),
-                    icon: Icons.home,
-                    text: 'Home',
-                  ),
-                  GButton(
-                    padding: EdgeInsets.all(12.0),
-                    margin: EdgeInsets.all(12.0),
-                    leading: SvgPicture.asset(
-                      AppIcons.star,
-                      color: _currentIndex == 1
-                          ? AppColor.cFFFFFF
-                          : AppColor.c555555,
-                      height: 20.h,
-                      width: 20.w,
-                    ),
-                    icon: Icons.home,
-                    text: 'Saved',
-                  ),
-                  GButton(
-                    padding: EdgeInsets.all(12.0),
-                    margin: EdgeInsets.all(12.0),
-                    leading: SvgPicture.asset(
-                      AppIcons.profile,
-                      color: _currentIndex == 2
-                          ? AppColor.cFFFFFF
-                          : AppColor.c555555,
-                      height: 20.h,
-                      width: 20.w,
-                    ),
-                    icon: Icons.home,
-                    text: 'Profile',
+            padding: EdgeInsets.symmetric(horizontal: 65.w, vertical: 10.h),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColor.c444F5E.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(32.r),
+                border: Border.all(
+                  color: AppColor.cFFFFFF.withValues(alpha: 0.25),
+                  width: 1.w,
+                ),
+                boxShadow: [
+                  BoxShadow( 
+                    color: Colors.black.withValues(alpha: 0.45),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                    offset: Offset(0, 4),
                   ),
                 ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32.r),
+                child: GNav(
+                  activeColor: AppColor.cFFFFFF,
+                  tabBackgroundColor: AppColor.cFFFFFF.withValues(alpha: 0.11),
+                  gap: 8,
+                  backgroundColor: Colors.transparent,
+                  selectedIndex: _currentIndex,
+                  onTabChange: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  tabs: [
+                    GButton(
+                      padding: EdgeInsets.all(12.0),
+                      margin: EdgeInsets.all(8.0),
+                      leading: SvgPicture.asset(
+                        AppIcons.home,
+                        color: _currentIndex == 0
+                            ? AppColor.cFFFFFF
+                            : AppColor.c555555,
+                        height: 20.h,
+                        width: 20.w,
+                      ),
+                      icon: Icons.home,
+                      text: 'Home',
+                    ),
+                    GButton(
+                      padding: EdgeInsets.all(12.0),
+                      margin: EdgeInsets.all(12.0),
+                      leading: SvgPicture.asset(
+                        AppIcons.star,
+                        color: _currentIndex == 1
+                            ? AppColor.cFFFFFF
+                            : AppColor.c555555,
+                        height: 20.h,
+                        width: 20.w,
+                      ),
+                      icon: Icons.home,
+                      text: 'Saved',
+                    ),
+                    GButton(
+                      padding: EdgeInsets.all(12.0),
+                      margin: EdgeInsets.all(12.0),
+                      leading: SvgPicture.asset(
+                        AppIcons.profile,
+                        color: _currentIndex == 2
+                            ? AppColor.cFFFFFF
+                            : AppColor.c555555,
+                        height: 20.h,
+                        width: 20.w,
+                      ),
+                      icon: Icons.home,
+                      text: 'Profile',
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
