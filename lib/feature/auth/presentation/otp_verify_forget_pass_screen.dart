@@ -6,11 +6,17 @@ import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/assets_helper/app_images.dart';
 import 'package:nick_me/common_widgets/custom_save_button.dart';
 import 'package:nick_me/helpers/all_routes.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
 import 'package:nick_me/helpers/navigation_service.dart';
+import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/helpers/ui_helpers.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 class OtpVerifyForgetPassScreen extends StatefulWidget {
-  const OtpVerifyForgetPassScreen({super.key});
+  final String? email;
+  final String? otpToken;
+
+  const OtpVerifyForgetPassScreen({super.key, this.email, this.otpToken});
   @override
   State<OtpVerifyForgetPassScreen> createState() =>
       _OtpVerifyForgetPassScreenState();
@@ -23,6 +29,16 @@ class _OtpVerifyForgetPassScreenState extends State<OtpVerifyForgetPassScreen> {
     (_) => TextEditingController(),
   );
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+
+  String email = '';
+  String otpToken = '';
+
+  @override
+  void initState() {
+    super.initState();
+    email = widget.email ?? '';
+    otpToken = widget.otpToken ?? '';
+  }
 
   // Combine all 4 boxes into one OTP string
   String getOtp() {
@@ -65,6 +81,7 @@ class _OtpVerifyForgetPassScreenState extends State<OtpVerifyForgetPassScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             UIHelper.verticalSpace(80.h),
+                            // Text(otpToken),
                             Center(
                               child: Text(
                                 'Verify OTP',
@@ -156,10 +173,45 @@ class _OtpVerifyForgetPassScreenState extends State<OtpVerifyForgetPassScreen> {
                             UIHelper.verticalSpace(40.h),
                             CustomSaveButton(
                               btnText: 'Verify',
-                              onCall: () {
-                                NavigationService.navigateTo(
-                                  Routes.setNewPasswordScreen,
+                              onCall: () async {
+                                final otp = getOtp();
+                                if (otp.length < 4) {
+                                  ToastUtil.showShortToast(
+                                    "Please enter complete OTP",
+                                  );
+                                  return;
+                                }
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      loadingIndicatorCircle(context: context),
                                 );
+
+                                String? resetToken =
+                                    await getEmailVerifySignUpRxObj
+                                        .emailVerifySignup(
+                                          email: email,
+                                          otp: otp,
+                                          otpToken: otpToken,
+                                        );
+                                if (!context.mounted) return;
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pop();
+
+                                if (resetToken != null) {
+                                  NavigationService.navigateToWithArgs(
+                                    Routes.setNewPasswordScreen,
+                                    {'reset_token': resetToken, 'email': email},
+                                  );
+                                } else {
+                                  ToastUtil.showShortToast(
+                                    getEmailVerifySignUpRxObj.errorMessage ??
+                                        'Verification failed',
+                                  );
+                                }
                               },
                             ),
                           ],

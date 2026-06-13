@@ -26,11 +26,12 @@ final class Endpoints {
   static String logOut() => "/auth/logout";
   static String register() => "/auth/register";
   static String otpVerifyRegister() => "/auth/verify-otp";
-  // static String resendOtp() => "/resend-otp"; 
+  static String forgetPass() => "/auth/forget-password";
+  static String resetPassrod() => "/auth/reset-password";
 
-  // static String forgetPass() => "/forget-password";
+  // static String resendOtp() => "/resend-otp";
+
   // static String emailOtpForgetPass() => "/auth/verify-otp";
-  // static String resetPassrod() => "/reset-password";
 
   static String destinationsList({
     int? perPage,

@@ -15,7 +15,7 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
 
   ValueStream get getFileData => dataFetcher.stream;
 
-  Future<bool> emailVerifySignup({
+  Future<String?> emailVerifySignup({
     required String email,
     required String otp,
     required String otpToken,
@@ -27,9 +27,13 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
         otpToken: otpToken,
       );
       handleSuccessWithReturn(data);
-      return true;
+      return data['data']?['reset_token'] ??
+          data['data']?['access_token'] ??
+          data['access_token'] ??
+          data['reset_token'];
     } catch (error) {
-      return handleErrorWithReturn(error);
+      handleErrorWithReturn(error);
+      return null;
     }
   }
 
@@ -37,10 +41,11 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
   handleSuccessWithReturn(data) async {
     await totalDataClean();
     String? accessToken = data['data']?['access_token'] ?? data['access_token'];
-    await appData.write(kKeyIsLoggedIn, true);
-    await appData.write(kKeyAccessToken, accessToken);
-
-    DioSingleton.instance.update(accessToken);
+    if (accessToken != null) {
+      await appData.write(kKeyIsLoggedIn, true);
+      await appData.write(kKeyAccessToken, accessToken);
+      DioSingleton.instance.update(accessToken);
+    }
     dataFetcher.sink.add(data);
     return data;
   }

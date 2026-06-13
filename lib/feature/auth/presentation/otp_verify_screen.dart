@@ -198,7 +198,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                       loadingIndicatorCircle(context: context),
                                 );
 
-                                bool verifySuccess =
+                                String? signupToken =
                                     await getEmailVerifySignUpRxObj
                                         .emailVerifySignup(
                                           email: email,
@@ -213,7 +213,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                   rootNavigator: true,
                                 ).pop();
 
-                                if (verifySuccess) {
+                                if (signupToken != null) {
                                   NavigationService.navigateToUntilReplacement(
                                     Routes.navigationScreen,
                                   );
