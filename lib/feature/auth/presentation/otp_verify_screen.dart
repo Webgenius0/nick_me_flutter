@@ -166,9 +166,40 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                         ),
                                       ),
                                 ),
-                                Text(
-                                  "Resend Code",
-                                  style: TextFontStyle.textStyle14cA8A8A8W500,
+                                GestureDetector(
+                                  onTap: () async {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) =>
+                                          loadingIndicatorCircle(
+                                            context: context,
+                                          ),
+                                    );
+                                    final resendOtpToken =
+                                        await getResendOtpRxObj.resetOtp(
+                                          email: email,
+                                        );
+                                    if (!context.mounted) return;
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pop();
+                                    if (resendOtpToken != null) {
+                                      setState(() {
+                                        otpToken = resendOtpToken;
+                                      });
+                                    } else {
+                                      ToastUtil.showShortToast(
+                                        getResendOtpRxObj.errorMessage ??
+                                            'Reset failed',
+                                      );
+                                    }
+                                  },
+                                  child: Text(
+                                    "Resend Code",
+                                    style: TextFontStyle.textStyle14cA8A8A8W500,
+                                  ),
                                 ),
                               ],
                             ),

@@ -10,15 +10,16 @@ final class ResendOtpRx extends RxResponseInt<Map> {
   ResendOtpRx({required super.empty, required super.dataFetcher});
   ValueStream get getFileData => dataFetcher.stream;
 
-  Future<bool> resetOtp({required String email}) async {
+  Future<String?> resetOtp({required String email}) async {
     try {
       final data = await api.resetOtp(email: email);
       log('Status here : $data');
       handleSuccessWithReturn(data);
-      return true;
+      return data['data']?['otp_token'] ?? data['otp_token'];
     } catch (error) {
       log('Error catch is here : ${error.toString()}');
-      return handleErrorWithReturn(error);
+      handleErrorWithReturn(error);
+      return null;
     }
   }
 

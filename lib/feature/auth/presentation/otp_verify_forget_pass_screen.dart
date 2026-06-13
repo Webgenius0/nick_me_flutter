@@ -166,13 +166,19 @@ class _OtpVerifyForgetPassScreenState extends State<OtpVerifyForgetPassScreen> {
                                             context: context,
                                           ),
                                     );
-                                    bool resetSuccess = await getResendOtpRxObj
-                                        .resetOtp(email: email);
+                                    final resendOtpToken =
+                                        await getResendOtpRxObj.resetOtp(
+                                          email: email,
+                                        );
+                                    if (!context.mounted) return;
                                     Navigator.of(
                                       context,
                                       rootNavigator: true,
                                     ).pop();
-                                    if (resetSuccess) {
+                                    if (resendOtpToken != null) {
+                                      setState(() {
+                                        otpToken = resendOtpToken;
+                                      });
                                     } else {
                                       ToastUtil.showShortToast(
                                         getResendOtpRxObj.errorMessage ??
