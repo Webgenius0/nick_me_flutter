@@ -1,5 +1,4 @@
 import 'package:auto_animated/auto_animated.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +7,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:nick_me/loading.dart';
 import 'package:provider/provider.dart';
 import '/helpers/all_routes.dart';
-
 import 'helpers/di.dart';
 import 'helpers/language.dart';
 import 'helpers/navigation_service.dart';
@@ -16,6 +14,7 @@ import 'helpers/register_provider.dart';
 import 'networks/dio/dio.dart';
 import 'package:nick_me/constants/update_customer.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +22,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await Hive.initFlutter();
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
@@ -43,11 +43,11 @@ void main() async {
     ),
   );
   runApp(
-    // const MyApp(),
-    DevicePreview(
-      enabled: true, // Set to false to disable device preview
-      builder: (context) => const MyApp(), // Your app widget
-    ),
+    const MyApp(),
+    // DevicePreview(
+    //   enabled: true, // Set to false to disable device preview
+    //   builder: (context) => const MyApp(), // Your app widget
+    // ),
   );
 }
 

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:nick_me/feature/profile/data/rx_profile_data_get/api.dart';
 import 'package:nick_me/feature/profile/model/profile_data_get_model.dart';
 import 'package:nick_me/helpers/toast.dart';
@@ -11,10 +12,31 @@ final class ProfileDataRX extends RxResponseInt<ProfileDataGetModel> {
   ProfileDataRX({required super.empty, required super.dataFetcher});
 
   ValueStream<ProfileDataGetModel> get profileData => dataFetcher.stream;
+
+  Future<void> loadCachedProfile() async {
+    try {
+      final box = await Hive.openBox('profileCache');
+      final cachedJson = box.get('profile_data');
+      if (cachedJson != null && cachedJson is String) {
+        final cachedData = ProfileDataGetModel.fromRawJson(cachedJson);
+        dataFetcher.sink.add(cachedData);
+      }
+    } catch (e) {
+      log('Error loading cached profile from Hive: $e');
+    }
+  }
+
   Future<bool> profileDataGet() async {
     try {
       ProfileDataGetModel data = await api.profileDataGet();
       handleSuccessWithReturn(data);
+
+      try {
+        final box = await Hive.openBox('profileCache');
+        await box.put('profile_data', data.toRawJson());
+      } catch (e) {
+        log('Error saving profile data to Hive: $e');
+      }
       // ToastUtil.showShortToast('Profile data fetched successfully');
       return true;
     } catch (error) {
