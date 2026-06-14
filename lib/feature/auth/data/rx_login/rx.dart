@@ -19,7 +19,6 @@ final class LoginRx extends RxResponseInt<Map> {
   Future<bool> login({required String email, required String password}) async {
     try {
       final data = await api.login(email: email, password: password);
-
       handleSuccessWithReturn(data);
       ToastUtil.showShortToast("Login successfuly");
 

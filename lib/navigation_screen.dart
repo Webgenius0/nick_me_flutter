@@ -60,7 +60,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
   void onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
-      getData();
+      if (_currentIndex == 2) {
+        getData();
+      }
     });
   }
 

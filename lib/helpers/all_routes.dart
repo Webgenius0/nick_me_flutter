@@ -8,6 +8,7 @@ import 'package:nick_me/feature/auth/presentation/otp_verify_forget_pass_screen.
 import 'package:nick_me/feature/auth/presentation/otp_verify_screen.dart';
 import 'package:nick_me/feature/auth/presentation/set_new_password_screen.dart';
 import 'package:nick_me/feature/home/presentation/generate_wisdom_screen.dart';
+import 'package:nick_me/feature/profile/presentation/change_password_screen.dart';
 import 'package:nick_me/feature/profile/presentation/edit_profile_screen.dart';
 import 'package:nick_me/feature/profile/presentation/help_and_support_screen.dart';
 import 'package:nick_me/feature/profile/presentation/privacy_policy_screen.dart';
@@ -32,6 +33,7 @@ final class Routes {
   static const String privacyPolicyScreen = '/privacyPolicyScreen';
   static const String termsAndConditions = '/termsAndConditions';
   static const String helpAndSupportScreen = '/helpAndSupportScreen';
+  static const String changePasswordScreen = '/changePasswordScreen';
 }
 
 final class RouteGenerator {
@@ -168,6 +170,14 @@ final class RouteGenerator {
                 settings: settings,
               )
             : CupertinoPageRoute(builder: (context) => HelpAndSupportScreen());
+
+      case Routes.changePasswordScreen:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: ChangePasswordScreen(),
+                settings: settings,
+              )
+            : CupertinoPageRoute(builder: (context) => ChangePasswordScreen());
 
       // case Routes.applicationDetailsHistoryScreen:
       //   final item = settings.arguments as VerificationRequest;

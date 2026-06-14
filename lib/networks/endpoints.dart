@@ -31,6 +31,7 @@ final class Endpoints {
   static String resendOtp() => "/auth/resend-otp";
   static String getUserProfile() => "/user/user-info";
   static String updateProfile() => "/user/update-profile";
+  static String changePass() => "/user/update-password";
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 
   static String destinationsList({

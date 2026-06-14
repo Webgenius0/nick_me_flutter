@@ -13,22 +13,17 @@ final class UpdateProfileApi {
 
   Future<Map> updateProfile({String? name, File? avatar}) async {
     try {
-      // Step 1: Create map
-      Map<String, dynamic> dataMap = {"name": name};
-
+      Map<String, dynamic> dataMap = {"first_name": name};
       FormData formData = FormData.fromMap(dataMap);
-
       if (avatar != null && await File(avatar.path).exists()) {
         formData.files.add(
           MapEntry('avatar', await MultipartFile.fromFile(avatar.path)),
         );
       }
-
-      // Step 6: Send request
       Response response = await postHttp(Endpoints.updateProfile(), formData);
 
       if (response.statusCode == 200) {
-        final data = json.decode(json.encode(response.data)); 
+        final data = json.decode(json.encode(response.data));
         ToastUtil.showShortToast(data['message']);
         return data;
       } else {

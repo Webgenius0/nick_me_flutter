@@ -182,6 +182,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                         ),
+                        Divider(
+                          height: 1,
+                          color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.lock_outline,
+                          title: "Change Password",
+                          onTap: () {
+                            NavigationService.navigateTo(
+                              Routes.changePasswordScreen,
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
