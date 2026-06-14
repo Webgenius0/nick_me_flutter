@@ -13,6 +13,7 @@ import 'helpers/language.dart';
 import 'helpers/navigation_service.dart';
 import 'helpers/register_provider.dart';
 import 'networks/dio/dio.dart';
+import 'package:nick_me/constants/update_customer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,12 @@ void main() async {
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
-  DioSingleton.instance.create();
+  String? token = appData.read(kKeyAccessToken);
+  if (token != null && token.isNotEmpty) {
+    DioSingleton.instance.update(token);
+  } else {
+    DioSingleton.instance.create();
+  }
 
   // Set status bar color
   SystemChrome.setSystemUIOverlayStyle(
@@ -52,10 +58,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: providers,
       child: AnimateIfVisibleWrapper(
-        showItemInterval: const Duration(milliseconds: 150),
+        showItemInterval: Duration(milliseconds: 150),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            return const UtillScreenMobile();
+            return UtillScreenMobile();
           },
         ),
       ),
@@ -69,7 +75,7 @@ class UtillScreenMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(412, 827),
+      designSize: Size(412, 827),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {

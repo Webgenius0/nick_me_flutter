@@ -9,6 +9,7 @@ import 'package:nick_me/helpers/all_routes.dart';
 import 'package:nick_me/helpers/navigation_service.dart';
 import 'package:nick_me/helpers/loding_indicator_widgets.dart';
 import 'package:nick_me/networks/api_acess.dart';
+import 'package:nick_me/feature/profile/model/profile_data_get_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,6 +18,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    getProfileDataRXObj.profileDataGet();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -59,37 +66,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  Container(
-                    width: 100.w,
-                    height: 100.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColor.cFFFFFF.withValues(alpha: 0.1),
-                        width: 4,
-                      ),
-                      image: const DecorationImage(
-                        image: NetworkImage(
-                          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    "Sarah Jenkins",
-                    style: TextFontStyle.textStyle16cFFFFFFInterW600.copyWith(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    "sarah.jenkins@example.com",
-                    style: TextFontStyle.textStyle14cFFFFFFInterW500.copyWith(
-                      color: AppColor.cFFFFFF.withValues(alpha: 0.4),
-                    ),
+                  StreamBuilder<ProfileDataGetModel>(
+                    stream: getProfileDataRXObj.profileData,
+                    builder: (context, snapshot) {
+                      final profileData = snapshot.data;
+                      final user = profileData?.data?.user;
+                      final name = user != null
+                          ? "${user.firstName ?? ''} ${user.lastName ?? ''}"
+                                .trim()
+                          : "";
+                      final displayName = name.isNotEmpty
+                          ? name
+                          : (user?.username ?? "Sarah Jenkins");
+                      final email = user?.email ?? "sarah.jenkins@example.com";
+                      final avatar = user?.avatar;
+
+                      String avatarUrl = "";
+                      if (avatar != null && avatar.isNotEmpty) {
+                        if (avatar.startsWith('http')) {
+                          avatarUrl = avatar;
+                        } else if (avatar.startsWith('/')) {
+                          avatarUrl = "https://admin.askthestoics.com$avatar";
+                        } else {
+                          avatarUrl = "https://admin.askthestoics.com/$avatar";
+                        }
+                      }
+
+                      return Column(
+                        children: [
+                          Container(
+                            width: 100.w,
+                            height: 100.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColor.cFFFFFF.withValues(alpha: 0.1),
+                                width: 4,
+                              ),
+                              image: DecorationImage(
+                                image: avatarUrl.isNotEmpty
+                                    ? NetworkImage(avatarUrl)
+                                    : NetworkImage(
+                                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
+                                      ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            displayName,
+                            style: TextFontStyle.textStyle16cFFFFFFInterW600
+                                .copyWith(
+                                  fontSize: 24.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            email,
+                            style: TextFontStyle.textStyle14cFFFFFFInterW500
+                                .copyWith(
+                                  color: AppColor.cFFFFFF.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   SizedBox(height: 40.h),
                   Align(

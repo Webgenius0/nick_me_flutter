@@ -28,7 +28,8 @@ final class Endpoints {
   static String otpVerifyRegister() => "/auth/verify-otp";
   static String forgetPass() => "/auth/forget-password";
   static String resetPassrod() => "/auth/reset-password";
-  static String resendOtp() => "/auth/resend-otp"; 
+  static String resendOtp() => "/auth/resend-otp";
+  static String getUserProfile() => "/user/user-info";
 
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 
