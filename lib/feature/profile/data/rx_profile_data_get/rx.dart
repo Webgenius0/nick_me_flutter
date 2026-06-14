@@ -15,7 +15,7 @@ final class ProfileDataRX extends RxResponseInt<ProfileDataGetModel> {
     try {
       ProfileDataGetModel data = await api.profileDataGet();
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Profile data fetched successfully');
+      // ToastUtil.showShortToast('Profile data fetched successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);

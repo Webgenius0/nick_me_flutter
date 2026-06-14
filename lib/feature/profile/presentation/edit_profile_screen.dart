@@ -8,6 +8,9 @@ import 'package:nick_me/assets_helper/app_images.dart';
 import 'package:nick_me/assets_helper/app_colors.dart';
 import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/common_widgets/custom_app_bar.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
+import 'package:nick_me/helpers/toast.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -16,11 +19,21 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController _nameController = TextEditingController(
-    text: "Sarah Jenkins",
-  );
+  final TextEditingController _nameController = TextEditingController();
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (getProfileDataRXObj.dataFetcher.hasValue) {
+      final user = getProfileDataRXObj.dataFetcher.value.data?.user;
+      if (user != null) {
+        final name = "${user.firstName}".trim();
+        _nameController.text = name.isNotEmpty ? name : (user.username ?? "");
+      }
+    }
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(
@@ -87,6 +100,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = getProfileDataRXObj.dataFetcher.hasValue
+        ? getProfileDataRXObj.dataFetcher.value.data?.user
+        : null;
+    final avatar = user?.avatar;
+    String avatarUrl = "";
+    if (avatar != null && avatar.isNotEmpty) {
+      if (avatar.startsWith('http')) {
+        avatarUrl = avatar;
+      } else if (avatar.startsWith('/')) {
+        avatarUrl = "https://admin.askthestoics.com$avatar";
+      } else {
+        avatarUrl = "https://admin.askthestoics.com/$avatar";
+      }
+    }
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
@@ -109,7 +137,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   SizedBox(height: 10.h),
                   CustomAppBar(
                     trailing: GestureDetector(
-                      onTap: () {},
+                      onTap: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) =>
+                              loadingIndicatorCircle(context: context),
+                        );
+                        bool updateSuccess = await getUpdateProfileRxObj
+                            .updateProfile(
+                              name: _nameController.text.trim(),
+                              avatar: _selectedImage,
+                            );
+
+                        Navigator.of(context, rootNavigator: true).pop();
+                        if (updateSuccess) {
+                          getProfileDataRXObj.profileDataGet();
+                          Navigator.pop(context);
+                        } else {
+                          ToastUtil.showShortToast("Failed to update profile");
+                        }
+                      },
                       child: Text(
                         "Save",
                         style: TextFontStyle.textStyle14cFFFFFFInterW500
@@ -132,9 +180,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           image: DecorationImage(
                             image: _selectedImage != null
                                 ? FileImage(_selectedImage!)
-                                : const NetworkImage(
-                                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
-                                      )
+                                : (avatarUrl.isNotEmpty
+                                          ? NetworkImage(avatarUrl)
+                                          : NetworkImage(
+                                              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
+                                            ))
                                       as ImageProvider,
                             fit: BoxFit.cover,
                           ),

@@ -1,4 +1,5 @@
 import 'package:auto_animated/auto_animated.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,7 @@ import 'helpers/navigation_service.dart';
 import 'helpers/register_provider.dart';
 import 'networks/dio/dio.dart';
 import 'package:nick_me/constants/update_customer.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +26,8 @@ void main() async {
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
-  String? token = appData.read(kKeyAccessToken);
+  await SecureStorage.migrateLegacyToken(appData, kKeyAccessToken);
+  String? token = await SecureStorage.getToken();
   if (token != null && token.isNotEmpty) {
     DioSingleton.instance.update(token);
   } else {
@@ -40,11 +43,11 @@ void main() async {
     ),
   );
   runApp(
-    const MyApp(),
-    // DevicePreview(
-    //   enabled: true, // Set to false to disable device preview
-    //   builder: (context) => const MyApp(), // Your app widget
-    // ),
+    // const MyApp(),
+    DevicePreview(
+      enabled: true, // Set to false to disable device preview
+      builder: (context) => const MyApp(), // Your app widget
+    ),
   );
 }
 

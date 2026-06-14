@@ -4,6 +4,8 @@ import '/helpers/di.dart';
 import '../../constants/update_customer.dart';
 import '../endpoints.dart';
 import 'log.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
+
 
 final class DioSingleton {
   static final DioSingleton _singleton = DioSingleton._internal();
@@ -29,7 +31,12 @@ final class DioSingleton {
   }
 
   void update(String? auth) {
-    appData.write(kKeyAccessToken, auth);
+    if (auth != null && auth.isNotEmpty) {
+      SecureStorage.saveToken(auth);
+    } else {
+      SecureStorage.deleteToken();
+    }
+    appData.remove(kKeyAccessToken);
     if (kDebugMode) {
       print("Dio update");
     }
@@ -48,7 +55,8 @@ final class DioSingleton {
     dio = Dio(options)..interceptors.add(Logger());
   }
 
-  void updateLanguage(String countryCode) {
+  void updateLanguage(String countryCode) async {
+    String? token = await SecureStorage.getToken();
     if (kDebugMode) {
       print("Dio update $countryCode");
     }
@@ -59,8 +67,7 @@ final class DioSingleton {
         NetworkConstants.ACCEPT: NetworkConstants.ACCEPT_TYPE,
         NetworkConstants.ACCEPT_LANGUAGE: countryCode,
         NetworkConstants.APP_KEY: NetworkConstants.APP_KEY_VALUE,
-        NetworkConstants.AUTHORIZATION:
-            "Bearer ${appData.read(kKeyAccessToken)} ",
+        NetworkConstants.AUTHORIZATION: "Bearer $token ",
       },
       connectTimeout: const Duration(milliseconds: 100000),
       receiveTimeout: const Duration(milliseconds: 100000),
@@ -68,7 +75,10 @@ final class DioSingleton {
     dio = Dio(options)..interceptors.add(Logger());
   }
 
-  void clear() {}
+  void clear() {
+    SecureStorage.deleteToken();
+    appData.remove(kKeyAccessToken);
+  }
 }
 
 Future<Response> postHttp(String path, [dynamic data]) => DioSingleton

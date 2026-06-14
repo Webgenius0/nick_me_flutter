@@ -6,6 +6,8 @@ import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
+
 import 'package:rxdart/rxdart.dart';
 import '../../../../../../networks/rx_base.dart';
 
@@ -17,7 +19,6 @@ final class LoginRx extends RxResponseInt<Map> {
   Future<bool> login({required String email, required String password}) async {
     try {
       final data = await api.login(email: email, password: password);
-
       handleSuccessWithReturn(data);
       ToastUtil.showShortToast("Login successfuly");
 
@@ -33,10 +34,11 @@ final class LoginRx extends RxResponseInt<Map> {
     await totalDataClean();
     String? accessToken = data['data']['access_token'];
     await appData.write(kKeyIsLoggedIn, true);
-    await appData.write(kKeyAccessToken, accessToken);
-    String token = appData.read(kKeyAccessToken);
+    if (accessToken != null) {
+      await SecureStorage.saveToken(accessToken);
+    }
     dataFetcher.sink.add(data);
-    DioSingleton.instance.update(token);
+    DioSingleton.instance.update(accessToken);
 
     return data;
 

@@ -5,6 +5,8 @@ import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/exception_handler/data_source.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
+
  
 
 import '/networks/endpoints.dart';
@@ -16,13 +18,13 @@ final class LogoutApi {
 
   Future<Map> logout() async {
     try {
-      String? token = appData.read(kKeyAccessToken);
+      String? token = await SecureStorage.getToken();
       String? role = appData.read(kKeyRole);
       if (token == null && role == null) throw Exception('Token not found');
       DioSingleton.instance.update(token);
       Response response = await postHttp(Endpoints.logOut());
       if (response.statusCode == 200 || response.statusCode == 201) {
-        await appData.remove(kKeyAccessToken);
+        await SecureStorage.deleteToken();
         await appData.remove(kKeyIsLoggedIn);
         final data = jsonDecode(json.encode(response.data));
         return data;

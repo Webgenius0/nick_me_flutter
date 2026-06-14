@@ -6,6 +6,8 @@ import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
+
 
 import 'package:rxdart/rxdart.dart';
 import '../../../../../../networks/rx_base.dart';
@@ -32,7 +34,7 @@ final class LogoutRx extends RxResponseInt<Map> {
   handleSuccessWithReturn(data) async {
     totalDataClean();
     await appData.remove(kKeyIsLoggedIn);
-    await appData.remove(kKeyAccessToken);
+    await SecureStorage.deleteToken();
     // Remove auth token from Dio
     DioSingleton.instance.clear();
     dataFetcher.sink.add(data);

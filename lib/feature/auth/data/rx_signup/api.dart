@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:nick_me/constants/update_customer.dart';
-import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/exception_handler/data_source.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
 
 import '/networks/endpoints.dart';
 
@@ -31,9 +30,9 @@ final class SignupApi {
         "terms_and_conditions": termsAndConditions ? 1 : 0,
       });
       Response response = await postHttp(Endpoints.register(), data);
-      DioSingleton.instance.update(appData.read(kKeyAccessToken));
+      String? token = await SecureStorage.getToken();
+      DioSingleton.instance.update(token);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // final data = jsonDecode(response.data);
         final data = jsonDecode(jsonEncode(response.data));
         ToastUtil.showShortToast("Sign Up successful. Please verify with OTP.");
 

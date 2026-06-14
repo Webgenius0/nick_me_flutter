@@ -3,41 +3,33 @@ import 'package:dio/dio.dart';
 import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/exception_handler/data_source.dart';
-import 'package:nick_me/helpers/secure_storage.dart';
 import '/networks/endpoints.dart';
 
-final class ResetPassApi {
-  static final ResetPassApi _singleton = ResetPassApi._internal();
-  ResetPassApi._internal();
-  static ResetPassApi get instance => _singleton;
-
-  Future<Map> resetPass({
-    required String email,
-    required String password,
-    required String confirmPassword,
-    required String resetToken,
+final class ChangePassApi {
+  static final ChangePassApi _singleton = ChangePassApi._internal();
+  ChangePassApi._internal();
+  static ChangePassApi get instance => _singleton;
+  Future<Map> changePass({
+    required String currentPassword,
+    required String newPassword,
+    required String newPasswordConfirmation,
   }) async {
     try {
       FormData data = FormData.fromMap({
-        "email": email,
-        "password": password,
-        "password_confirmation": confirmPassword,
-        "reset_token": resetToken,
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "new_password_confirmation": newPasswordConfirmation,
       });
-      Response response = await postHttp(Endpoints.resetPassrod(), data);
-      String? token = await SecureStorage.getToken();
-      DioSingleton.instance.update(token);
+      Response response = await postHttp(Endpoints.changePass(), data);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(jsonEncode(response.data));
-        ToastUtil.showShortToast("Password reset successfully.");
-
+        ToastUtil.showShortToast("Password change successfully.");
         return data;
       } else {
         throw DataSource.DEFAULT.getFailure();
       }
     } catch (error) {
-      // Handle generic errors
       rethrow;
     }
   }
@@ -46,9 +38,7 @@ final class ResetPassApi {
 final class MysingletonClass {
   // private constructor.
   MysingletonClass._internal();
-
   //only one object is created.
   static final MysingletonClass _singleton = MysingletonClass._internal();
-
   static MysingletonClass get instance => _singleton;
 }

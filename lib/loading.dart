@@ -1,12 +1,11 @@
 // ignore_for_file: strict_top_level_inference
 
 import 'package:flutter/material.dart';
-import 'package:nick_me/constants/update_customer.dart';
 import 'package:nick_me/feature/auth/presentation/login_screen.dart';
-import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/helpers/helper_methods.dart';
 import 'package:nick_me/navigation_screen.dart';
 import 'package:nick_me/splash_screen.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
 
 final class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -17,6 +16,7 @@ final class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   bool _isLoading = true;
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
@@ -27,6 +27,8 @@ class _LoadingState extends State<Loading> {
   loadInitialData() async {
     _isLoading = true;
     await setInitValue();
+    String? token = await SecureStorage.getToken();
+    _isLoggedIn = token != null && token.isNotEmpty;
     setState(() {
       _isLoading = false;
     });
@@ -37,9 +39,7 @@ class _LoadingState extends State<Loading> {
     if (_isLoading) {
       return SplashScreen();
     } else {
-      return appData.read(kKeyAccessToken) != null
-          ? NavigationScreen(pageNum: 0)
-          : LoginScreen();
+      return _isLoggedIn ? NavigationScreen(pageNum: 0) : LoginScreen();
       // : HomeNewScreen();
       // var token = appData.read(kKeyAccessToken);
       // if (token != null && role == "customer") {
