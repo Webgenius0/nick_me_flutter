@@ -5,6 +5,8 @@ import 'package:nick_me/feature/auth/data/rx_signup/api.dart';
 import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
+
 
 import 'package:rxdart/rxdart.dart';
 import '../../../../../../networks/rx_base.dart';
@@ -48,7 +50,9 @@ final class SignUpRX extends RxResponseInt<Map> {
     totalDataClean();
     String? accessToken = data['data']['access_token'];
     appData.write(kKeyIsLoggedIn, true);
-    appData.write(kKeyAccessToken, accessToken);
+    if (accessToken != null) {
+      await SecureStorage.saveToken(accessToken);
+    }
     DioSingleton.instance.update(accessToken);
 
     dataFetcher.sink.add(data);

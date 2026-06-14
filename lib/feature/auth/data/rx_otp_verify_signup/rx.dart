@@ -5,7 +5,9 @@ import 'package:nick_me/constants/update_customer.dart';
 import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
 import '../../../../../../networks/rx_base.dart';
+
 
 final class EmailVerifySignUpRx extends RxResponseInt<Map> {
   String? errorMessage;
@@ -43,7 +45,7 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
     String? accessToken = data['data']?['access_token'] ?? data['access_token'];
     if (accessToken != null) {
       await appData.write(kKeyIsLoggedIn, true);
-      await appData.write(kKeyAccessToken, accessToken);
+      await SecureStorage.saveToken(accessToken);
       DioSingleton.instance.update(accessToken);
     }
     dataFetcher.sink.add(data);

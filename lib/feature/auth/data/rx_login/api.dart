@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:nick_me/constants/update_customer.dart';
-import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/exception_handler/data_source.dart';
+import 'package:nick_me/helpers/secure_storage.dart';
 import '/networks/endpoints.dart';
 
 final class LoginApi {
@@ -15,9 +14,9 @@ final class LoginApi {
     try {
       FormData data = FormData.fromMap({"email": email, "password": password});
       Response response = await postHttp(Endpoints.logIn(), data);
-      DioSingleton.instance.update(appData.read(kKeyAccessToken));
+      String? token = await SecureStorage.getToken();
+      DioSingleton.instance.update(token);
       if (response.statusCode == 200) {
-        // final data = jsonDecode(response.data);
         final data = jsonDecode(jsonEncode(response.data));
 
         return data;
