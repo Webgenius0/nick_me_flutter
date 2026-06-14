@@ -30,7 +30,7 @@ final class Endpoints {
   static String resetPassrod() => "/auth/reset-password";
   static String resendOtp() => "/auth/resend-otp";
   static String getUserProfile() => "/user/user-info";
-
+  static String updateProfile() => "/user/update-profile";
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 
   static String destinationsList({
