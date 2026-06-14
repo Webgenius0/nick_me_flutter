@@ -8,8 +8,7 @@ import 'package:nick_me/assets_helper/app_icons.dart';
 import 'package:nick_me/feature/home/presentation/home_screen.dart';
 import 'package:nick_me/feature/profile/presentation/profile_screen.dart';
 import 'package:nick_me/feature/saved/presentation/saved_screen.dart';
-
-import 'helpers/helper_methods.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 final class NavigationScreen extends StatefulWidget {
   final int? pageNum;
@@ -28,6 +27,47 @@ class _NavigationScreenState extends State<NavigationScreen> {
     ProfileScreen(),
   ];
 
+  Future<bool> _onWillPop() async {
+    if (_currentIndex != 0) {
+      // If not on Home, go to Home tab
+      setState(() {
+        _currentIndex = 0;
+      });
+      return false; // Prevent default back action
+    } else {
+      // If already on Home, optionally show exit dialog
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Exit App"),
+              content: Text("Do you really want to exit?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text("No"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text("Yes"),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    }
+  }
+
+  void onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+      getData();
+    });
+  }
+
+  Future<void> getData() async {
+    Future.wait([getProfileDataRXObj.profileDataGet()]);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -36,11 +76,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        showMaterialDialog(context);
-      },
+    return WillPopScope(
+      onWillPop: _onWillPop,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBody: true,
@@ -57,7 +94,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   width: 1.w,
                 ),
                 boxShadow: [
-                  BoxShadow( 
+                  BoxShadow(
                     color: Colors.black.withValues(alpha: 0.45),
                     blurRadius: 20,
                     spreadRadius: 2,
@@ -73,22 +110,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   gap: 8,
                   backgroundColor: Colors.transparent,
                   selectedIndex: _currentIndex,
-                  onTabChange: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
+                  onTabChange: onItemTapped,
                   tabs: [
                     GButton(
                       padding: EdgeInsets.all(12.0),
                       margin: EdgeInsets.all(8.0),
-                      leading: SvgPicture.asset(
-                        AppIcons.home,
-                        color: _currentIndex == 0
-                            ? AppColor.cFFFFFF
-                            : AppColor.c555555,
-                        height: 20.h,
-                        width: 20.w,
+                      leading: Padding(
+                        padding: EdgeInsets.only(left: 6.h),
+                        child: SvgPicture.asset(
+                          AppIcons.home,
+                          color: _currentIndex == 0
+                              ? AppColor.cFFFFFF
+                              : AppColor.c5A6478,
+                          height: 20.h,
+                          width: 20.w,
+                        ),
                       ),
                       icon: Icons.home,
                       text: 'Home',
@@ -100,7 +136,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         AppIcons.star,
                         color: _currentIndex == 1
                             ? AppColor.cFFFFFF
-                            : AppColor.c555555,
+                            : AppColor.c5A6478,
                         height: 20.h,
                         width: 20.w,
                       ),
@@ -110,13 +146,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     GButton(
                       padding: EdgeInsets.all(12.0),
                       margin: EdgeInsets.all(12.0),
-                      leading: SvgPicture.asset(
-                        AppIcons.profile,
-                        color: _currentIndex == 2
-                            ? AppColor.cFFFFFF
-                            : AppColor.c555555,
-                        height: 20.h,
-                        width: 20.w,
+                      leading: Padding(
+                        padding: EdgeInsets.only(right: 6.h),
+                        child: SvgPicture.asset(
+                          AppIcons.profile,
+                          color: _currentIndex == 2
+                              ? AppColor.cFFFFFF
+                              : AppColor.c5A6478,
+                          height: 20.h,
+                          width: 20.w,
+                        ),
                       ),
                       icon: Icons.home,
                       text: 'Profile',
