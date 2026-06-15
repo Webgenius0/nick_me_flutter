@@ -12,7 +12,6 @@ final class ProfileDataRX extends RxResponseInt<ProfileDataGetModel> {
   ProfileDataRX({required super.empty, required super.dataFetcher});
 
   ValueStream<ProfileDataGetModel> get profileData => dataFetcher.stream;
-
   Future<void> loadCachedProfile() async {
     try {
       final box = await Hive.openBox('profileCache');
@@ -30,7 +29,6 @@ final class ProfileDataRX extends RxResponseInt<ProfileDataGetModel> {
     try {
       ProfileDataGetModel data = await api.profileDataGet();
       handleSuccessWithReturn(data);
-
       try {
         final box = await Hive.openBox('profileCache');
         await box.put('profile_data', data.toRawJson());

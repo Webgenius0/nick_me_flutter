@@ -17,6 +17,8 @@ Future<void> totalDataClean() async {
     await chatBox.clear();
     var profileBox = await Hive.openBox('profileCache');
     await profileBox.clear();
+    var termsBox = await Hive.openBox<String>('termsCache');
+    await termsBox.clear();
   } catch (e) {
     // ignore
   }

@@ -23,6 +23,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await Hive.initFlutter();
+  await Hive.openBox<String>('termsCache');
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
@@ -32,7 +33,7 @@ void main() async {
     DioSingleton.instance.update(token);
   } else {
     DioSingleton.instance.create();
-  }
+  } 
 
   // Set status bar color
   SystemChrome.setSystemUIOverlayStyle(
