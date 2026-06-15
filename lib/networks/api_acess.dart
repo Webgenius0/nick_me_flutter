@@ -6,9 +6,11 @@ import 'package:nick_me/feature/auth/data/rx_reset_password/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_signup/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_otp_verify_signup/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_change_password/rx.dart';
+import 'package:nick_me/feature/profile/data/rx_privacy_policy/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_profile_data_get/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_profile_data_update/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_terms_condition/rx.dart';
+import 'package:nick_me/feature/profile/model/privacy_policy_model.dart';
 import 'package:nick_me/feature/profile/model/profile_data_get_model.dart';
 import 'package:nick_me/feature/profile/model/terms_and_contitions.dart';
 import 'package:rxdart/rxdart.dart';
@@ -55,4 +57,9 @@ ChangePassRX getChangePassRXObj = ChangePassRX(
 TermsAndConditionRX getTermsAndConditionRXObj = TermsAndConditionRX(
   empty: TermsPrivacyPolicyModel(),
   dataFetcher: BehaviorSubject<TermsPrivacyPolicyModel>(),
+);
+
+PrivacyPolicyRX getPrivacyPolicyRXObj = PrivacyPolicyRX(
+  empty: PrivacyPolicyModel(),
+  dataFetcher: BehaviorSubject<PrivacyPolicyModel>(),
 );

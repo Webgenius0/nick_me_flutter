@@ -120,7 +120,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextFontStyle.textStyle12interW400),
+        Text(title, style: TextFontStyle.textStyle24SpaceGroteskW700),
         UIHelper.verticalSpace(20.h),
         Html(
           data: htmlContent,

@@ -19,6 +19,8 @@ Future<void> totalDataClean() async {
     await profileBox.clear();
     var termsBox = await Hive.openBox<String>('termsCache');
     await termsBox.clear();
+    var privacyBox = await Hive.openBox<String>('privacyPolicyCache');
+    await privacyBox.clear();
   } catch (e) {
     // ignore
   }

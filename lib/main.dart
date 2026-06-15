@@ -23,7 +23,8 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await Hive.initFlutter();
-  await Hive.openBox<String>('termsCache');
+  await Hive.openBox<String>('termsCache'); 
+  await Hive.openBox<String>('privacyPolicyCache');
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
