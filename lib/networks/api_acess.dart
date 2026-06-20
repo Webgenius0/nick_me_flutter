@@ -22,6 +22,7 @@ import 'package:nick_me/feature/home/model/wisdom_generate_model.dart';
 import 'package:nick_me/feature/home/data/rx_save_wisdom/rx.dart';
 import 'package:nick_me/feature/saved/data/rx_wisdom_save_list/rx.dart';
 import 'package:nick_me/feature/saved/model/all_saved_stoic_model.dart';
+import 'package:nick_me/feature/profile/data/rx_delete_account/rx.dart';
 import 'package:rxdart/rxdart.dart';
 
 LoginRx getLoginRxObj = LoginRx(empty: {}, dataFetcher: BehaviorSubject<Map>());
@@ -96,4 +97,9 @@ SaveWisdomRx getSaveWisdomRxObj = SaveWisdomRx(
 WisdomSaveListRx getWisdomSaveListRxObj = WisdomSaveListRx(
   empty: AllSavedStoicModel(),
   dataFetcher: BehaviorSubject<AllSavedStoicModel>(),
+);
+
+DeleteAccountRx getDeleteAccountRxObj = DeleteAccountRx(
+  empty: {},
+  dataFetcher: BehaviorSubject<Map>(),
 );
