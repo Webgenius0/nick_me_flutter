@@ -49,20 +49,22 @@ class WisdomQuoteCard extends StatelessWidget {
                 color: AppColor.cFFFFFF.withValues(alpha: 0.2),
               ),
               SizedBox(width: 12.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    author,
-                    style: TextFontStyle.textStyle16cFFFFFFInterW600,
-                  ),
-                  Text(
-                    source,
-                    style: TextFontStyle.textStyle14cFFFFFFInterW500.copyWith(
-                      color: AppColor.cFFFFFF.withValues(alpha: 0.3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      author,
+                      style: TextFontStyle.textStyle16cFFFFFFInterW600,
                     ),
-                  ),
-                ],
+                    Text(
+                      source,
+                      style: TextFontStyle.textStyle14cFFFFFFInterW500.copyWith(
+                        color: AppColor.cFFFFFF.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

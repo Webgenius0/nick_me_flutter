@@ -32,6 +32,15 @@ final class Endpoints {
   static String getUserProfile() => "/user/user-info";
   static String updateProfile() => "/user/update-profile";
   static String changePass() => "/user/update-password";
+  static String termsAndContitions() => "/terms-and-conditions";
+  static String privacyPolicy() => "/privacy-policy";
+  static String wisdomAuthors() => "/v1/wisdom/authors";
+  static String virtues() => "/v1/virtues";
+  static String wisdomGenerate() => "/v1/wisdom/generate";
+  static String wisdomSave() => "/v1/wisdom/toggle-save";
+  static String wisdomSaveList() => "/v1/wisdom/saved";
+
+
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 
   static String destinationsList({

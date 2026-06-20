@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import '../constants/update_customer.dart';
 import '../helpers/di.dart';
+import 'package:nick_me/networks/api_acess.dart';
 
 Future<void> totalDataClean() async {
   await appData.write(kKeyIsLoggedIn, false);
@@ -14,9 +15,17 @@ Future<void> totalDataClean() async {
     await verificationBox.clear();
     var chatBox = await Hive.openBox('chatCache');
     await chatBox.clear();
+    var profileBox = await Hive.openBox('profileCache');
+    await profileBox.clear();
+    var termsBox = await Hive.openBox<String>('termsCache');
+    await termsBox.clear();
+    var privacyBox = await Hive.openBox<String>('privacyPolicyCache');
+    await privacyBox.clear();
   } catch (e) {
     // ignore
   }
+
+  getProfileDataRXObj.clean();
 
   //lisbon
   // appData.writeIfNull(kKeySelectedLat, 38.74631383626653);

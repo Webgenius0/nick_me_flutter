@@ -27,8 +27,8 @@ class AiReflectionCard extends StatelessWidget {
             AppColor.c444F5E.withValues(alpha: 0.9),
             AppColor.c0B0D10.withValues(alpha: 0.3),
           ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24.r),
         border: Border.all(color: AppColor.cFFFFFF.withValues(alpha: 0.1)),
@@ -62,9 +62,14 @@ class AiReflectionCard extends StatelessWidget {
           ),
           if (isEnabled) ...[
             SizedBox(height: 16.h),
-            Divider(color: AppColor.cFFFFFF.withValues(alpha: 0.05)),
+            Divider(color: AppColor.cFFFFFF.withValues(alpha: 0.5)),
             SizedBox(height: 16.h),
-            Text(content, style: TextFontStyle.textStyle14cFFFFFFInterW300),
+            Text(
+              content,
+              style: TextFontStyle.textStyle14cFFFFFFInterW300.copyWith(
+                color: AppColor.c8896AC,
+              ),
+            ),
           ],
         ],
       ),
