@@ -8,6 +8,10 @@ import 'package:nick_me/common_widgets/custom_save_button.dart';
 import 'package:nick_me/feature/home/widgets/author_chip.dart';
 import 'package:nick_me/helpers/all_routes.dart';
 import 'package:nick_me/helpers/navigation_service.dart';
+import 'package:nick_me/networks/api_acess.dart';
+import 'package:nick_me/feature/home/model/wisdom_authors_model.dart';
+import 'package:nick_me/feature/home/model/virtues_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,38 +22,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedAuthor = "Any of the authors";
   final PageController _virtueController = PageController();
-
-  final List<Map<String, String>> _virtues = [
-    {
-      "title": "Wisdom",
-      "subtitle": "Sophia",
-      "description":
-          "The ability to discern what is good, bad, and indifferent. Wisdom guides all other virtues and allows us to navigate life's complexities with clarity and sound judgment.",
-    },
-    {
-      "title": "Justice",
-      "subtitle": "Dikaiosyne",
-      "description":
-          "Treating others with fairness, honesty, and respect. Justice is the foundation of all human relationships and the cornerstone of a well-ordered society.",
-    },
-    {
-      "title": "Temperance",
-      "subtitle": "Sophrosyne",
-      "description":
-          "Self-discipline and moderation in all things. Temperance keeps our desires and passions in check, allowing reason to guide our actions rather than impulse.",
-    },
-    {
-      "title": "Courage",
-      "subtitle": "Andreia",
-      "description":
-          "Acting rightly in the face of fear, pain, or adversity. Courage is not the absence of fear, but the resolve to do what is right regardless of the cost.",
-    },
-  ];
+  final Box<String> _authorsBox = Hive.box<String>('wisdomAuthorsCache');
+  final Box<String> _virtuesBox = Hive.box<String>('virtuesCache');
 
   int _currentVirtueIndex = 0;
   @override
   void initState() {
     super.initState();
+    getWisdomAuthorsRXObj.getWisdomAuthors();
+    getVirtuesRXObj.getVirtues();
     Future.delayed(Duration.zero, () {
       _startAutoScroll();
     });
@@ -58,7 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _startAutoScroll() {
     Future.doWhile(() async {
       await Future.delayed(Duration(seconds: 12));
-      if (!mounted || !_virtueController.hasClients) return false;
+      if (!mounted) return false;
+      if (!_virtueController.hasClients) return true;
       _currentVirtueIndex++;
       await _virtueController.animateToPage(
         _currentVirtueIndex,
@@ -118,27 +100,99 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   ],
                   // ),
                   // SizedBox(height: 30.h),
-                  Wrap(
-                    spacing: 12.w,
-                    runSpacing: 16.h,
-                    children:
-                        [
-                          "Marcus Aurelius",
-                          "Seneca",
-                          "Epictetus",
-                          "Musonius Rufus",
-                          "Any of the authors",
-                        ].map((author) {
-                          return AuthorChip(
-                            label: author,
-                            isActive: _selectedAuthor == author,
-                            onTap: () {
-                              setState(() {
-                                _selectedAuthor = author;
-                              });
-                            },
-                          );
-                        }).toList(),
+                  StreamBuilder<WisdomAuthorsModel>(
+                    stream: getWisdomAuthorsRXObj.wisdomAuthors,
+                    builder: (context, snapshot) {
+                      final cachedJson = _authorsBox.get('authorsJson');
+
+                      Widget buildWrap(List<String> list) {
+                        return Wrap(
+                          spacing: 12.w,
+                          runSpacing: 16.h,
+                          children: list.map((author) {
+                            return AuthorChip(
+                              label: author,
+                              isActive: _selectedAuthor == author,
+                              onTap: () {
+                                setState(() {
+                                  _selectedAuthor = author;
+                                });
+                              },
+                            );
+                          }).toList(),
+                        );
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (cachedJson != null && cachedJson.isNotEmpty) {
+                          try {
+                            final cachedModel = WisdomAuthorsModel.fromRawJson(
+                              cachedJson,
+                            );
+                            final cachedAuthors =
+                                cachedModel.data?.authors
+                                    ?.map((author) => author.name ?? '')
+                                    .where((name) => name.isNotEmpty)
+                                    .toList() ??
+                                [];
+                            if (cachedAuthors.isNotEmpty) {
+                              return buildWrap(cachedAuthors);
+                            }
+                          } catch (e) {
+                            // ignore
+                          }
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      List<String> authors = [];
+                      if (snapshot.hasData &&
+                          snapshot.data?.data?.authors != null) {
+                        _authorsBox.put(
+                          'authorsJson',
+                          snapshot.data!.toRawJson(),
+                        );
+                        authors = snapshot.data!.data!.authors!
+                            .map((author) => author.name ?? '')
+                            .where((name) => name.isNotEmpty)
+                            .toList();
+                      } else if (snapshot.hasError) {
+                        if (cachedJson != null && cachedJson.isNotEmpty) {
+                          try {
+                            final cachedModel = WisdomAuthorsModel.fromRawJson(
+                              cachedJson,
+                            );
+                            final cachedAuthors =
+                                cachedModel.data?.authors
+                                    ?.map((author) => author.name ?? '')
+                                    .where((name) => name.isNotEmpty)
+                                    .toList() ??
+                                [];
+                            if (cachedAuthors.isNotEmpty) {
+                              return buildWrap(cachedAuthors);
+                            }
+                          } catch (e) {
+                            // ignore
+                          }
+                        }
+                      }
+
+                      if (authors.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "No authors",
+                            style: TextFontStyle.textStyle14cFFFFFFInterW500
+                                .copyWith(
+                                  color: AppColor.cFFFFFF.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                          ),
+                        );
+                      }
+
+                      return buildWrap(authors);
+                    },
                   ),
                   SizedBox(height: 40.h),
                   Text(
@@ -149,75 +203,151 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 16.h),
-                  SizedBox(
-                    height: 180.h,
-                    child: PageView.builder(
-                      controller: _virtueController,
-                      scrollDirection: Axis.horizontal,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentVirtueIndex = index;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        final virtue = _virtues[index % _virtues.length];
+                  StreamBuilder<VirtuesModel>(
+                    stream: getVirtuesRXObj.virtues,
+                    builder: (context, snapshot) {
+                      final cachedJson = _virtuesBox.get('virtuesJson');
 
-                        return Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(20.w),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColor.c444F5E.withValues(alpha: 1),
-                                AppColor.c0B0D10.withValues(alpha: 1),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(
-                              color: AppColor.cFFFFFF.withValues(alpha: 0.1),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    virtue["title"]!,
-                                    style: TextFontStyle
-                                        .textStyle16cFFFFFFInterW600,
+                      Widget buildPageView(List<Datum> list) {
+                        return SizedBox(
+                          height: 180.h,
+                          child: PageView.builder(
+                            controller: _virtueController,
+                            scrollDirection: Axis.horizontal,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentVirtueIndex = index;
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              final virtue = list[index % list.length];
+
+                              return Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(20.w),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColor.c444F5E.withValues(alpha: 1),
+                                      AppColor.c0B0D10.withValues(alpha: 1),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
                                   ),
-                                  Text(
-                                    " - ${virtue["subtitle"]}",
-                                    style: TextFontStyle
-                                        .textStyle16cFFFFFFInterW400
-                                        .copyWith(
-                                          color: AppColor.cFFFFFF.withValues(
-                                            alpha: 0.3,
-                                          ),
-                                        ),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(
+                                    color: AppColor.cFFFFFF.withValues(
+                                      alpha: 0.1,
+                                    ),
                                   ),
-                                ],
-                              ),
-                              SizedBox(height: 8.h),
-                              Divider(
-                                color: AppColor.cFFFFFF.withValues(alpha: 0.1),
-                              ),
-                              SizedBox(height: 8.h),
-                              Expanded(
-                                child: Text(
-                                  virtue["description"]!,
-                                  style:
-                                      TextFontStyle.textStyle14cFFFFFFInterW300,
                                 ),
-                              ),
-                            ],
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          virtue.name ?? '',
+                                          style: TextFontStyle
+                                              .textStyle16cFFFFFFInterW600,
+                                        ),
+                                        Text(
+                                          " - ${virtue.greekName ?? ''}",
+                                          style: TextFontStyle
+                                              .textStyle16cFFFFFFInterW400
+                                              .copyWith(
+                                                color: AppColor.cFFFFFF
+                                                    .withValues(alpha: 0.3),
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Divider(
+                                      color: AppColor.cFFFFFF.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Expanded(
+                                      child: Text(
+                                        virtue.description ?? '',
+                                        style: TextFontStyle
+                                            .textStyle14cFFFFFFInterW300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         );
-                      },
-                    ),
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (cachedJson != null && cachedJson.isNotEmpty) {
+                          try {
+                            final cachedModel = VirtuesModel.fromRawJson(
+                              cachedJson,
+                            );
+                            final cachedVirtuesList = cachedModel.data ?? [];
+                            if (cachedVirtuesList.isNotEmpty) {
+                              return buildPageView(cachedVirtuesList);
+                            }
+                          } catch (e) {
+                            // ignore
+                          }
+                        }
+                        return SizedBox(
+                          height: 180.h,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      List<Datum> virtuesList = [];
+                      if (snapshot.hasData && snapshot.data?.data != null) {
+                        _virtuesBox.put(
+                          'virtuesJson',
+                          snapshot.data!.toRawJson(),
+                        );
+                        virtuesList = snapshot.data!.data!;
+                      } else if (snapshot.hasError) {
+                        if (cachedJson != null && cachedJson.isNotEmpty) {
+                          try {
+                            final cachedModel = VirtuesModel.fromRawJson(
+                              cachedJson,
+                            );
+                            final cachedVirtuesList = cachedModel.data ?? [];
+                            if (cachedVirtuesList.isNotEmpty) {
+                              return buildPageView(cachedVirtuesList);
+                            }
+                          } catch (e) {
+                            // ignore
+                          }
+                        }
+                      }
+
+                      if (virtuesList.isEmpty) {
+                        return SizedBox(
+                          height: 180.h,
+                          child: Center(
+                            child: Text(
+                              "No virtues",
+                              style: TextFontStyle.textStyle14cFFFFFFInterW500
+                                  .copyWith(
+                                    color: AppColor.cFFFFFF.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return buildPageView(virtuesList);
+                    },
                   ),
 
                   // Container(

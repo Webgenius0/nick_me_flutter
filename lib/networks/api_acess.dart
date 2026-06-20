@@ -13,6 +13,10 @@ import 'package:nick_me/feature/profile/data/rx_terms_condition/rx.dart';
 import 'package:nick_me/feature/profile/model/privacy_policy_model.dart';
 import 'package:nick_me/feature/profile/model/profile_data_get_model.dart';
 import 'package:nick_me/feature/profile/model/terms_and_contitions.dart';
+import 'package:nick_me/feature/home/data/rx_wisdom_authors/rx.dart';
+import 'package:nick_me/feature/home/model/wisdom_authors_model.dart';
+import 'package:nick_me/feature/home/data/rx_virtues/rx.dart';
+import 'package:nick_me/feature/home/model/virtues_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 LoginRx getLoginRxObj = LoginRx(empty: {}, dataFetcher: BehaviorSubject<Map>());
@@ -62,4 +66,14 @@ TermsAndConditionRX getTermsAndConditionRXObj = TermsAndConditionRX(
 PrivacyPolicyRX getPrivacyPolicyRXObj = PrivacyPolicyRX(
   empty: PrivacyPolicyModel(),
   dataFetcher: BehaviorSubject<PrivacyPolicyModel>(),
+);
+
+WisdomAuthorsRx getWisdomAuthorsRXObj = WisdomAuthorsRx(
+  empty: WisdomAuthorsModel(),
+  dataFetcher: BehaviorSubject<WisdomAuthorsModel>(),
+);
+
+VirtuesRx getVirtuesRXObj = VirtuesRx(
+  empty: VirtuesModel(),
+  dataFetcher: BehaviorSubject<VirtuesModel>(),
 );

@@ -34,6 +34,8 @@ final class Endpoints {
   static String changePass() => "/user/update-password";
   static String termsAndContitions() => "/terms-and-conditions";
   static String privacyPolicy() => "/privacy-policy";
+  static String wisdomAuthors() => "/v1/wisdom/authors";
+  static String virtues() => "/v1/virtues";
 
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 

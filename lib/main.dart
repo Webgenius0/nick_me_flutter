@@ -25,6 +25,8 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox<String>('termsCache'); 
   await Hive.openBox<String>('privacyPolicyCache');
+  await Hive.openBox<String>('wisdomAuthorsCache');
+  await Hive.openBox<String>('virtuesCache');
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();

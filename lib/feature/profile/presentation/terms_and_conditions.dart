@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:hive/hive.dart';
 import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/assets_helper/app_images.dart';
@@ -62,13 +61,12 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
                       stream: getTermsAndConditionRXObj.termsPrivacyPolicy,
                       builder: (context, snapshot) {
                         final cachedHtml = _termsBox.get('termsHtml');
-
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           // If we have cached data, show it immediately while loading
                           if (cachedHtml != null && cachedHtml.isNotEmpty) {
                             return _buildHtmlContent(
-                              'Terms & Conditions'.tr,
+                              'Terms & Conditions',
                               cachedHtml,
                             );
                           }
@@ -79,27 +77,27 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
                           final termData = snapshot.data!.data!;
                           _termsBox.put('termsHtml', termData.content ?? '');
                           return _buildHtmlContent(
-                            termData.title ?? 'Terms & Conditions'.tr,
+                            termData.title ?? 'Terms & Conditions',
                             termData.content ?? '',
                           );
                         } else if (snapshot.hasError) {
                           // Fallback to cache on error
                           if (cachedHtml != null && cachedHtml.isNotEmpty) {
                             return _buildHtmlContent(
-                              'Terms & Conditions (Offline)'.tr,
+                              'Terms & Conditions (Offline)',
                               cachedHtml,
                             );
                           }
                           return Center(
                             child: Text(
-                              'Error loading data'.tr,
+                              'Error loading data',
                               style: TextFontStyle.textStyle12interW400,
                             ),
                           );
                         } else {
                           return Center(
                             child: Text(
-                              'No content available'.tr,
+                              'No content available',
                               style: TextFontStyle.textStyle12interW400,
                             ),
                           );
