@@ -227,7 +227,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ProfileMenuItem(
                           icon: Icons.delete_outline,
                           title: "Delete Account",
-                          onTap: () {},
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                backgroundColor: AppColor.c0E1116,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  side: BorderSide(
+                                    color: AppColor.cFFFFFF.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  "Delete Account",
+                                  style: TextFontStyle
+                                      .textStyle16cFFFFFFInterW600
+                                      .copyWith(fontSize: 20.sp),
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: Text(
+                                  "Are you sure you want to delete your account? This action is permanent and cannot be undone.",
+                                  style: TextFontStyle
+                                      .textStyle14cFFFFFFInterW500
+                                      .copyWith(
+                                        color: AppColor.cFFFFFF.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                actionsAlignment: MainAxisAlignment.spaceEvenly,
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(dialogContext).pop(),
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextFontStyle
+                                          .textStyle14cFFFFFFInterW500
+                                          .copyWith(
+                                            color: AppColor.cFFFFFF.withValues(
+                                              alpha: 0.5,
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (loadingContext) =>
+                                            loadingIndicatorCircle(
+                                              context: loadingContext,
+                                            ),
+                                      );
+                                      bool deleteSuccess =
+                                          await getDeleteAccountRxObj
+                                              .deleteAccount();
+
+                                      if (!context.mounted) return;
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pop();
+
+                                      Navigator.of(dialogContext).pop();
+
+                                      if (deleteSuccess) {
+                                        NavigationService.navigateToUntilReplacement(
+                                          Routes.loginScreen,
+                                        );
+                                      }
+                                    },
+                                    child: Text(
+                                      "Yes, Delete",
+                                      style: TextFontStyle
+                                          .textStyle14cFFFFFFInterW500
+                                          .copyWith(color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                         Divider(
                           height: 1,

@@ -1,31 +1,31 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:nick_me/constants/update_customer.dart';
-import 'package:nick_me/feature/auth/data/rx_logout/api.dart';
+import 'package:nick_me/feature/profile/data/rx_delete_account/api.dart';
 import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/helpers/toast.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
-
-
 import 'package:rxdart/rxdart.dart';
-import '../../../../../../networks/rx_base.dart';
+import 'package:nick_me/networks/rx_base.dart';
 
-final class LogoutRx extends RxResponseInt<Map> {
+final class DeleteAccountRx extends RxResponseInt<Map> {
   String? errorMessage;
-  final api = LogoutApi.instance;
-  LogoutRx({required super.empty, required super.dataFetcher});
+  final api = DeleteAccountApi.instance;
+  DeleteAccountRx({required super.empty, required super.dataFetcher});
   ValueStream get getFileData => dataFetcher.stream;
 
-  Future<bool> logout() async {
+  Future<bool> deleteAccount() async {
     try {
-      Map success = await api.logout();
-      ToastUtil.showShortToast("Logout successful");
-      handleSuccessWithReturn(success);
+      Map success = await api.deleteAccount();
+      await handleSuccessWithReturn(success);
+      ToastUtil.showShortToast(
+        success['message'] ?? "Account deleted successfully",
+      );
       return true;
     } catch (error) {
-      log('Logout Error   : ${error.toString()}');
+      log('Delete Account Error: ${error.toString()}');
       return handleErrorWithReturn(error);
     }
   }
@@ -35,7 +35,6 @@ final class LogoutRx extends RxResponseInt<Map> {
     await totalDataClean();
     await appData.remove(kKeyIsLoggedIn);
     await SecureStorage.deleteToken();
-    // Remove auth token from Dio
     DioSingleton.instance.clear();
     dataFetcher.sink.add(data);
     return data;
@@ -44,15 +43,14 @@ final class LogoutRx extends RxResponseInt<Map> {
   @override
   handleErrorWithReturn(error) {
     if (error is DioException) {
-      if (error.response!.statusCode == 400) {
-        errorMessage = error.response!.data['message'];
-      } else if (error.response!.data['code'] == 403) {
-        errorMessage = error.response!.data['message'];
+      if (error.response?.statusCode == 400) {
+        errorMessage = error.response?.data['message'];
+      } else if (error.response?.data?['code'] == 403) {
+        errorMessage = error.response?.data['message'];
       } else {
-        errorMessage = error.response!.data['message'];
+        errorMessage = error.response?.data?['message'] ?? error.message;
       }
     }
-    // log(error.toString());
     dataFetcher.sink.addError(error);
     return false;
   }

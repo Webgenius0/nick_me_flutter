@@ -8,7 +8,8 @@ import 'package:nick_me/feature/home/widgets/author_chip.dart';
 import 'package:nick_me/feature/saved/widgets/saved_quote_card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nick_me/networks/api_acess.dart';
-import 'package:nick_me/feature/home/model/wisdom_authors_model.dart' as authors_model;
+import 'package:nick_me/feature/home/model/wisdom_authors_model.dart'
+    as authors_model;
 import 'package:nick_me/feature/saved/model/all_saved_stoic_model.dart';
 import 'package:nick_me/helpers/loding_indicator_widgets.dart';
 
@@ -21,6 +22,40 @@ class SavedScreen extends StatefulWidget {
 class _SavedScreenState extends State<SavedScreen> {
   String _selectedAuthor = "All";
   final Box<String> _authorsBox = Hive.box<String>('wisdomAuthorsCache');
+
+  String? _getSlugForAuthor(String authorName) {
+    if (authorName == "All") return null;
+
+    // 1. Try to get from active stream value
+    final streamAuthors =
+        getWisdomAuthorsRXObj.wisdomAuthors.valueOrNull?.data?.authors;
+    if (streamAuthors != null) {
+      final match = streamAuthors.firstWhere(
+        (a) => a.name == authorName,
+        orElse: () => authors_model.Author(slug: null, name: null),
+      );
+      if (match.slug != null) return match.slug;
+    }
+
+    // 2. Try to get from cache
+    try {
+      final cachedJson = _authorsBox.get('authorsJson');
+      if (cachedJson != null && cachedJson.isNotEmpty) {
+        final cachedModel = authors_model.WisdomAuthorsModel.fromRawJson(
+          cachedJson,
+        );
+        final match = (cachedModel.data?.authors ?? []).firstWhere(
+          (a) => a.name == authorName,
+          orElse: () => authors_model.Author(slug: null, name: null),
+        );
+        return match.slug;
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    return null;
+  }
 
   @override
   void initState() {
@@ -85,27 +120,9 @@ class _SavedScreenState extends State<SavedScreen> {
                                     setState(() {
                                       _selectedAuthor = author;
                                     });
-                                    if (author == "All") {
-                                      getWisdomSaveListRxObj.getSavedWisdomList(
-                                        authorSlug: null,
-                                      );
-                                    } else {
-                                      final authorsList = getWisdomAuthorsRXObj
-                                              .wisdomAuthors
-                                              .valueOrNull
-                                              ?.data
-                                              ?.authors ??
-                                          [];
-                                      final matchingAuthor =
-                                          authorsList.firstWhere(
-                                        (a) => a.name == author,
-                                        orElse: () =>
-                                            authors_model.Author(slug: null, name: null),
-                                      );
-                                      getWisdomSaveListRxObj.getSavedWisdomList(
-                                        authorSlug: matchingAuthor.slug,
-                                      );
-                                    }
+                                    getWisdomSaveListRxObj.getSavedWisdomList(
+                                      authorSlug: _getSlugForAuthor(author),
+                                    );
                                   },
                                 ),
                               );
@@ -117,9 +134,8 @@ class _SavedScreenState extends State<SavedScreen> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         if (cachedJson != null && cachedJson.isNotEmpty) {
                           try {
-                            final cachedModel = authors_model.WisdomAuthorsModel.fromRawJson(
-                              cachedJson,
-                            );
+                            final cachedModel = authors_model
+                                .WisdomAuthorsModel.fromRawJson(cachedJson);
                             final cachedAuthors =
                                 cachedModel.data?.authors
                                     ?.map((author) => author.name ?? '')
@@ -146,9 +162,8 @@ class _SavedScreenState extends State<SavedScreen> {
                       } else if (snapshot.hasError) {
                         if (cachedJson != null && cachedJson.isNotEmpty) {
                           try {
-                            final cachedModel = authors_model.WisdomAuthorsModel.fromRawJson(
-                              cachedJson,
-                            );
+                            final cachedModel = authors_model
+                                .WisdomAuthorsModel.fromRawJson(cachedJson);
                             final cachedAuthors =
                                 cachedModel.data?.authors
                                     ?.map((author) => author.name ?? '')
@@ -203,8 +218,10 @@ class _SavedScreenState extends State<SavedScreen> {
                               "No saved quotes found.",
                               style: TextFontStyle.textStyle14cFFFFFFInterW500
                                   .copyWith(
-                                color: AppColor.cFFFFFF.withValues(alpha: 0.5),
-                              ),
+                                    color: AppColor.cFFFFFF.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
                             ),
                           ),
                         );
@@ -229,32 +246,18 @@ class _SavedScreenState extends State<SavedScreen> {
                                 bool success = await getSaveWisdomRxObj
                                     .saveWisdom(stoicSlug: slug);
                                 if (context.mounted) {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).pop();
                                 }
                                 if (success) {
                                   // Refresh the current list
-                                  if (_selectedAuthor == "All") {
-                                    getWisdomSaveListRxObj.getSavedWisdomList(
-                                      authorSlug: null,
-                                    );
-                                  } else {
-                                    final authorsList = getWisdomAuthorsRXObj
-                                            .wisdomAuthors
-                                            .valueOrNull
-                                            ?.data
-                                            ?.authors ??
-                                        [];
-                                    final matchingAuthor =
-                                        authorsList.firstWhere(
-                                      (a) => a.name == _selectedAuthor,
-                                      orElse: () =>
-                                          authors_model.Author(slug: null, name: null),
-                                    );
-                                    getWisdomSaveListRxObj.getSavedWisdomList(
-                                      authorSlug: matchingAuthor.slug,
-                                    );
-                                  }
+                                  getWisdomSaveListRxObj.getSavedWisdomList(
+                                    authorSlug: _getSlugForAuthor(
+                                      _selectedAuthor,
+                                    ),
+                                  );
                                 }
                               }
                             },

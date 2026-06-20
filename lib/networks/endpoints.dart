@@ -39,7 +39,7 @@ final class Endpoints {
   static String wisdomGenerate() => "/v1/wisdom/generate";
   static String wisdomSave() => "/v1/wisdom/toggle-save";
   static String wisdomSaveList() => "/v1/wisdom/saved";
-
+  static String deleteAccount() => "/user/delete-account";
 
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 
