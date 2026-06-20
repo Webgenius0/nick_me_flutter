@@ -17,6 +17,11 @@ import 'package:nick_me/feature/home/data/rx_wisdom_authors/rx.dart';
 import 'package:nick_me/feature/home/model/wisdom_authors_model.dart';
 import 'package:nick_me/feature/home/data/rx_virtues/rx.dart';
 import 'package:nick_me/feature/home/model/virtues_model.dart';
+import 'package:nick_me/feature/home/data/rx_wisdom_generate/rx.dart';
+import 'package:nick_me/feature/home/model/wisdom_generate_model.dart';
+import 'package:nick_me/feature/home/data/rx_save_wisdom/rx.dart';
+import 'package:nick_me/feature/saved/data/rx_wisdom_save_list/rx.dart';
+import 'package:nick_me/feature/saved/model/all_saved_stoic_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 LoginRx getLoginRxObj = LoginRx(empty: {}, dataFetcher: BehaviorSubject<Map>());
@@ -76,4 +81,19 @@ WisdomAuthorsRx getWisdomAuthorsRXObj = WisdomAuthorsRx(
 VirtuesRx getVirtuesRXObj = VirtuesRx(
   empty: VirtuesModel(),
   dataFetcher: BehaviorSubject<VirtuesModel>(),
+);
+
+WisdomGenerateRx getWisdomGenerateRXObj = WisdomGenerateRx(
+  empty: WisdomGenerateModel(),
+  dataFetcher: BehaviorSubject<WisdomGenerateModel>(),
+);
+
+SaveWisdomRx getSaveWisdomRxObj = SaveWisdomRx(
+  empty: {},
+  dataFetcher: BehaviorSubject<Map>(),
+);
+
+WisdomSaveListRx getWisdomSaveListRxObj = WisdomSaveListRx(
+  empty: AllSavedStoicModel(),
+  dataFetcher: BehaviorSubject<AllSavedStoicModel>(),
 );

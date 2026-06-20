@@ -126,10 +126,12 @@ final class RouteGenerator {
       case Routes.generateWisdomScreen:
         return Platform.isAndroid
             ? _FadedTransitionRoute(
-                widget: GenerateWisdomScreen(),
+                widget: const GenerateWisdomScreen(),
                 settings: settings,
               )
-            : CupertinoPageRoute(builder: (context) => GenerateWisdomScreen());
+            : CupertinoPageRoute(
+                builder: (context) => const GenerateWisdomScreen(),
+              );
 
       case Routes.editProfileScreen:
         return Platform.isAndroid

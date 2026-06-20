@@ -12,6 +12,8 @@ import 'package:nick_me/networks/api_acess.dart';
 import 'package:nick_me/feature/home/model/wisdom_authors_model.dart';
 import 'package:nick_me/feature/home/model/virtues_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nick_me/helpers/toast.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _virtueController = PageController();
   final Box<String> _authorsBox = Hive.box<String>('wisdomAuthorsCache');
   final Box<String> _virtuesBox = Hive.box<String>('virtuesCache');
+  final TextEditingController _promptController = TextEditingController();
 
   int _currentVirtueIndex = 0;
   @override
@@ -54,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _promptController.dispose();
     _virtueController.dispose();
     super.dispose();
   }
@@ -80,26 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20.h),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Text(
-                  //       "GOOD AFTERNOON",
-                  //       style: TextFontStyle.textStyle14cFFFFFFInterW500
-                  //           .copyWith(
-                  //             color: AppColor.cFFFFFF.withValues(alpha: 0.5),
-                  //             letterSpacing: 2.0,
-                  //           ),
-                  //     ),
-                  //     CircleAvatar(
-                  //       radius: 20.r,
-                  //       backgroundImage: const NetworkImage(
-                  //         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // SizedBox(height: 30.h),
+
                   StreamBuilder<WisdomAuthorsModel>(
                     stream: getWisdomAuthorsRXObj.wisdomAuthors,
                     builder: (context, snapshot) {
@@ -231,8 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       AppColor.c444F5E.withValues(alpha: 1),
                                       AppColor.c0B0D10.withValues(alpha: 1),
                                     ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
                                   borderRadius: BorderRadius.circular(16.r),
                                   border: Border.all(
@@ -328,7 +313,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         }
                       }
-
                       if (virtuesList.isEmpty) {
                         return SizedBox(
                           height: 180.h,
@@ -345,58 +329,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       }
-
                       return buildPageView(virtuesList);
                     },
                   ),
-
-                  // Container(
-                  //   width: double.infinity,
-                  //   padding: EdgeInsets.all(20.w),
-                  //   decoration: BoxDecoration(
-                  //     gradient: LinearGradient(
-                  //       colors: [
-                  //         AppColor.c444F5E.withValues(alpha: 1),
-                  //         AppColor.c0B0D10.withValues(alpha: 1),
-                  //       ],
-                  //       begin: Alignment.topCenter,
-                  //       end: Alignment.bottomCenter,
-                  //     ),
-                  //     borderRadius: BorderRadius.circular(16.r),
-                  //     border: Border.all(
-                  //       color: AppColor.cFFFFFF.withValues(alpha: 0.1),
-                  //     ),
-                  //   ),
-                  //   child: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Row(
-                  //         children: [
-                  //           Text(
-                  //             "Wisdom",
-                  //             style: TextFontStyle.textStyle16cFFFFFFInterW600,
-                  //           ),
-                  //           Text(
-                  //             " - Sophia",
-                  //             style: TextFontStyle.textStyle16cFFFFFFInterW400
-                  //                 .copyWith(
-                  //                   color: AppColor.cFFFFFF.withValues(
-                  //                     alpha: 0.3,
-                  //                   ),
-                  //                 ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       SizedBox(height: 8.h),
-                  //       Divider(color: AppColor.cFFFFFF.withValues(alpha: 0.1)),
-                  //       SizedBox(height: 8.h),
-                  //       Text(
-                  //         "The ability to discern what is good, bad, and indifferent. Wisdom guides all other virtues and allows us to navigate life's complexities with clarity and sound judgment.",
-                  //         style: TextFontStyle.textStyle14cFFFFFFInterW300,
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   SizedBox(height: 40.h),
                   RichText(
                     text: TextSpan(
@@ -425,6 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     child: TextField(
+                      controller: _promptController,
                       style: TextFontStyle.textStyle16cFFFFFFInterW400,
                       maxLines: 3,
                       decoration: InputDecoration(
@@ -440,8 +376,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 30.h),
                   CustomSaveButton(
                     btnText: "Ask The Stoics",
-                    onCall: () {
-                      NavigationService.navigateTo(Routes.generateWisdomScreen);
+                    onCall: () async {
+                      if (_promptController.text.trim().isEmpty) {
+                        ToastUtil.showShortToast(
+                          "Please describe your struggle or question",
+                        );
+                        return;
+                      }
+
+                      final authors =
+                          getWisdomAuthorsRXObj
+                              .wisdomAuthors
+                              .valueOrNull
+                              ?.data
+                              ?.authors ??
+                          [];
+                      final selectedAuthorModel = authors.firstWhere(
+                        (author) => author.name == _selectedAuthor,
+                        orElse: () => Author(slug: null, name: null),
+                      );
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                            loadingIndicatorCircle(context: context),
+                      );
+
+                      bool success = await getWisdomGenerateRXObj
+                          .generateWisdom(
+                            authorSlug: selectedAuthorModel.slug,
+                            prompt: _promptController.text,
+                          );
+
+                      if (!context.mounted) return;
+                      Navigator.of(context, rootNavigator: true).pop();
+
+                      if (success) {
+                        _promptController.clear();
+                        NavigationService.navigateTo(
+                          Routes.generateWisdomScreen,
+                        );
+                      }
                     },
                   ),
 

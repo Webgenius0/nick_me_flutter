@@ -6,6 +6,11 @@ import 'package:nick_me/assets_helper/app_colors.dart';
 import 'package:nick_me/assets_helper/app_fonts.dart';
 import 'package:nick_me/feature/home/widgets/author_chip.dart';
 import 'package:nick_me/feature/saved/widgets/saved_quote_card.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nick_me/networks/api_acess.dart';
+import 'package:nick_me/feature/home/model/wisdom_authors_model.dart' as authors_model;
+import 'package:nick_me/feature/saved/model/all_saved_stoic_model.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
@@ -15,6 +20,13 @@ class SavedScreen extends StatefulWidget {
 
 class _SavedScreenState extends State<SavedScreen> {
   String _selectedAuthor = "All";
+  final Box<String> _authorsBox = Hive.box<String>('wisdomAuthorsCache');
+
+  @override
+  void initState() {
+    super.initState();
+    getWisdomSaveListRxObj.getSavedWisdomList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,52 +58,210 @@ class _SavedScreenState extends State<SavedScreen> {
                       fontSize: 12.sp,
                     ),
                   ),
-                  SizedBox(height: 12.h), 
+                  SizedBox(height: 12.h),
                   Text(
                     "Saved Stoic Quotes",
                     style: TextFontStyle.textStyle28cFFFFFFPlayfairW400
                         .copyWith(fontSize: 32.sp),
                   ),
                   SizedBox(height: 24.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children:
-                          [
-                            "All",
-                            "Marcus Aurelius",
-                            "Seneca",
-                            "Epictetus",
-                            "Musonius Rufus",
-                          ].map((author) {
-                            return Padding(
-                              padding: EdgeInsets.only(right: 12.w),
-                              child: AuthorChip(
-                                label: author,
-                                isActive: _selectedAuthor == author,
-                                onTap: () {
-                                  setState(() {
-                                    _selectedAuthor = author;
-                                  });
-                                },
-                              ),
+                  StreamBuilder<authors_model.WisdomAuthorsModel>(
+                    stream: getWisdomAuthorsRXObj.wisdomAuthors,
+                    builder: (context, snapshot) {
+                      final cachedJson = _authorsBox.get('authorsJson');
+
+                      Widget buildHorizontalList(List<String> list) {
+                        final fullList = ["All", ...list];
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: fullList.map((author) {
+                              return Padding(
+                                padding: EdgeInsets.only(right: 12.w),
+                                child: AuthorChip(
+                                  label: author,
+                                  isActive: _selectedAuthor == author,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedAuthor = author;
+                                    });
+                                    if (author == "All") {
+                                      getWisdomSaveListRxObj.getSavedWisdomList(
+                                        authorSlug: null,
+                                      );
+                                    } else {
+                                      final authorsList = getWisdomAuthorsRXObj
+                                              .wisdomAuthors
+                                              .valueOrNull
+                                              ?.data
+                                              ?.authors ??
+                                          [];
+                                      final matchingAuthor =
+                                          authorsList.firstWhere(
+                                        (a) => a.name == author,
+                                        orElse: () =>
+                                            authors_model.Author(slug: null, name: null),
+                                      );
+                                      getWisdomSaveListRxObj.getSavedWisdomList(
+                                        authorSlug: matchingAuthor.slug,
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (cachedJson != null && cachedJson.isNotEmpty) {
+                          try {
+                            final cachedModel = authors_model.WisdomAuthorsModel.fromRawJson(
+                              cachedJson,
                             );
-                          }).toList(),
-                    ),
+                            final cachedAuthors =
+                                cachedModel.data?.authors
+                                    ?.map((author) => author.name ?? '')
+                                    .where((name) => name.isNotEmpty)
+                                    .toList() ??
+                                [];
+                            if (cachedAuthors.isNotEmpty) {
+                              return buildHorizontalList(cachedAuthors);
+                            }
+                          } catch (e) {
+                            // ignore
+                          }
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      List<String> authors = [];
+                      if (snapshot.hasData &&
+                          snapshot.data?.data?.authors != null) {
+                        authors = snapshot.data!.data!.authors!
+                            .map((author) => author.name ?? '')
+                            .where((name) => name.isNotEmpty)
+                            .toList();
+                      } else if (snapshot.hasError) {
+                        if (cachedJson != null && cachedJson.isNotEmpty) {
+                          try {
+                            final cachedModel = authors_model.WisdomAuthorsModel.fromRawJson(
+                              cachedJson,
+                            );
+                            final cachedAuthors =
+                                cachedModel.data?.authors
+                                    ?.map((author) => author.name ?? '')
+                                    .where((name) => name.isNotEmpty)
+                                    .toList() ??
+                                [];
+                            if (cachedAuthors.isNotEmpty) {
+                              return buildHorizontalList(cachedAuthors);
+                            }
+                          } catch (e) {
+                            // ignore
+                          }
+                        }
+                      }
+
+                      return buildHorizontalList(authors);
+                    },
                   ),
+
                   SizedBox(height: 30.h),
-                  SavedQuoteCard(
-                    quote:
-                        "Waste no more time arguing about what a good man should be. Be one.",
-                    author: "Marcus Aurelius",
-                    source: "Meditations, X.16",
-                  ),
-                  SavedQuoteCard(
-                    quote:
-                        "It is not the man who has too little that is poor, but the man who hankers after more.",
-                    author: "Seneca",
-                    source: "Letters to Lucilius, II.6",
-                    isFavorite: false,
+                  StreamBuilder<AllSavedStoicModel>(
+                    stream: getWisdomSaveListRxObj.savedWisdomList,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                          height: 200.h,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+                        return SizedBox(
+                          height: 200.h,
+                          child: Center(
+                            child: Text(
+                              "Failed to load saved quotes. Please try again.",
+                              style: TextFontStyle.textStyle14cFFFFFFInterW500
+                                  .copyWith(color: Colors.redAccent),
+                            ),
+                          ),
+                        );
+                      }
+
+                      final items = snapshot.data?.data?.items ?? [];
+                      if (items.isEmpty) {
+                        return SizedBox(
+                          height: 200.h,
+                          child: Center(
+                            child: Text(
+                              "No saved quotes found.",
+                              style: TextFontStyle.textStyle14cFFFFFFInterW500
+                                  .copyWith(
+                                color: AppColor.cFFFFFF.withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: items.map((item) {
+                          return SavedQuoteCard(
+                            quote: item.wisdom?.stoic ?? "",
+                            author: item.author?.name ?? "Unknown Author",
+                            source: item.wisdom?.book ?? "",
+                            isFavorite: item.isSaved ?? true,
+                            onFavoriteTap: () async {
+                              final slug = item.wisdom?.slug;
+                              if (slug != null && slug.isNotEmpty) {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      loadingIndicatorCircle(context: context),
+                                );
+                                bool success = await getSaveWisdomRxObj
+                                    .saveWisdom(stoicSlug: slug);
+                                if (context.mounted) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                }
+                                if (success) {
+                                  // Refresh the current list
+                                  if (_selectedAuthor == "All") {
+                                    getWisdomSaveListRxObj.getSavedWisdomList(
+                                      authorSlug: null,
+                                    );
+                                  } else {
+                                    final authorsList = getWisdomAuthorsRXObj
+                                            .wisdomAuthors
+                                            .valueOrNull
+                                            ?.data
+                                            ?.authors ??
+                                        [];
+                                    final matchingAuthor =
+                                        authorsList.firstWhere(
+                                      (a) => a.name == _selectedAuthor,
+                                      orElse: () =>
+                                          authors_model.Author(slug: null, name: null),
+                                    );
+                                    getWisdomSaveListRxObj.getSavedWisdomList(
+                                      authorSlug: matchingAuthor.slug,
+                                    );
+                                  }
+                                }
+                              }
+                            },
+                          );
+                        }).toList(),
+                      );
+                    },
                   ),
                   SizedBox(height: 100.h), // Bottom nav spacer
                 ],
