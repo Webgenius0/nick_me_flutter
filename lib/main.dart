@@ -15,6 +15,8 @@ import 'networks/dio/dio.dart';
 import 'package:nick_me/constants/update_customer.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,20 +25,21 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await Hive.initFlutter();
-  await Hive.openBox<String>('termsCache'); 
+  await Hive.openBox<String>('termsCache');
   await Hive.openBox<String>('privacyPolicyCache');
   await Hive.openBox<String>('wisdomAuthorsCache');
   await Hive.openBox<String>('virtuesCache');
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SecureStorage.migrateLegacyToken(appData, kKeyAccessToken);
   String? token = await SecureStorage.getToken();
   if (token != null && token.isNotEmpty) {
     DioSingleton.instance.update(token);
   } else {
     DioSingleton.instance.create();
-  } 
+  }
 
   // Set status bar color
   SystemChrome.setSystemUIOverlayStyle(
