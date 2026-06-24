@@ -20,6 +20,8 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -32,7 +34,6 @@ void main() async {
   await GetStorage.init();
   diSetup();
   // initiInternetChecker();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SecureStorage.migrateLegacyToken(appData, kKeyAccessToken);
   String? token = await SecureStorage.getToken();
   if (token != null && token.isNotEmpty) {

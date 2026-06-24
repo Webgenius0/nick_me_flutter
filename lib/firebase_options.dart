@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     projectId: 'ask-the-stoics',
     storageBucket: 'ask-the-stoics.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyD7nj2MPbvaCWuANjfhH5hdJ-JpO_rXGgw',
     appId: '1:698103285003:ios:b5a32fec9379ea2f7c4e0e',
@@ -66,7 +65,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'ask-the-stoics.firebasestorage.app',
     iosBundleId: 'com.askthestoics.app',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyD7nj2MPbvaCWuANjfhH5hdJ-JpO_rXGgw',
     appId: '1:698103285003:ios:20ef193c2ce36bde7c4e0e',
