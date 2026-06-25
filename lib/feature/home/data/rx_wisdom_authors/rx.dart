@@ -16,7 +16,7 @@ final class WisdomAuthorsRx extends RxResponseInt<WisdomAuthorsModel> {
     try {
       WisdomAuthorsModel data = await api.getWisdomAuthors();
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Wisdom authors fetched successfully');
+      // ToastUtil.showShortToast('Wisdom authors fetched successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);
@@ -27,9 +27,13 @@ final class WisdomAuthorsRx extends RxResponseInt<WisdomAuthorsModel> {
   handleErrorWithReturn(dynamic error) {
     if (error is DioException) {
       if (error.response?.statusCode == 400) {
-        ToastUtil.showShortToast(error.response?.data["error"] ?? error.message);
+        ToastUtil.showShortToast(
+          error.response?.data["error"] ?? error.message,
+        );
       } else {
-        ToastUtil.showShortToast(error.response?.data["error"] ?? error.message);
+        ToastUtil.showShortToast(
+          error.response?.data["error"] ?? error.message,
+        );
       }
     }
     log(error.toString());

@@ -18,9 +18,9 @@ final class UpdateProfileRx extends RxResponseInt<Map> {
       Map data = await api.updateProfile(name: name, avatar: avatar);
 
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Profile updated successfully');
+      // ToastUtil.showShortToast('Profile updated successfully');
       return true;
-    } catch (error) { 
+    } catch (error) {
       return handleErrorWithReturn(error);
     }
   }

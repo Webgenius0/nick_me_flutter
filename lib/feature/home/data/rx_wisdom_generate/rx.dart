@@ -22,7 +22,7 @@ final class WisdomGenerateRx extends RxResponseInt<WisdomGenerateModel> {
         prompt: prompt,
       );
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Wisdom generated successfully');
+      // ToastUtil.showShortToast('Wisdom generated successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);
