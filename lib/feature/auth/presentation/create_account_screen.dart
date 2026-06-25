@@ -25,7 +25,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  bool rememberme = false;
+  bool termsCon = false;
   bool dailyreminders = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -148,7 +148,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () => setState(() {
-                                      rememberme = !rememberme;
+                                      termsCon = !termsCon;
                                     }),
                                     child: Container(
                                       height: 16.h,
@@ -162,7 +162,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                         ),
                                       ),
                                       child: Visibility(
-                                        visible: rememberme,
+                                        visible: termsCon,
                                         child: Icon(
                                           Icons.check,
                                           size: 16,
@@ -180,9 +180,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     maxLines: 2,
                                   ),
                                   UIHelper.horizontalSpace(12.w),
-                                  Text(
-                                    'Terms and Conditions',
-                                    style: TextFontStyle.textStyle13interW600,
+                                  GestureDetector(
+                                    onTap: () {
+                                      NavigationService.navigateTo(
+                                        Routes.termsAndConditions,
+                                      );
+                                    },
+                                    child: Text(
+                                      'Terms and Conditions',
+                                      style: TextFontStyle.textStyle13interW600,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -229,7 +236,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               CustomSaveButton(
                                 btnText: 'Register',
                                 onCall: () async {
-                                  if (!rememberme) {
+                                  if (!termsCon) {
                                     ToastUtil.showShortToast(
                                       "Please accept the Terms and Conditions",
                                     );
@@ -254,7 +261,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           .text
                                           .trim(),
                                       dailyReminders: dailyreminders,
-                                      termsAndConditions: rememberme,
+                                      termsAndConditions: termsCon,
                                     );
 
                                     Navigator.of(

@@ -1,10 +1,13 @@
 import 'package:auto_animated/auto_animated.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:nick_me/loading.dart';
+import 'package:nick_me/services/firebase_notification_service.dart';
+import 'package:nick_me/services/local_notification_service.dart';
 import 'package:provider/provider.dart';
 import '/helpers/all_routes.dart';
 import 'helpers/di.dart';
@@ -17,6 +20,8 @@ import 'package:nick_me/helpers/secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:developer';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +47,16 @@ void main() async {
     DioSingleton.instance.create();
   }
 
+  await LocalNotificationService.initialize();
+  await FirebaseNotificationService.initialize();
+  try {
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .requestPermission(alert: true, badge: true, sound: true);
+    log("Permission: ${settings.authorizationStatus}");
+  } catch (e) {
+    log("Error requesting notification permissions: $e");
+  }
+
   // Set status bar color
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -51,11 +66,11 @@ void main() async {
     ),
   );
   runApp(
-    const MyApp(),
-    // DevicePreview(
-    //   enabled: true, // Set to false to disable device preview
-    //   builder: (context) => const MyApp(), // Your app widget
-    // ),
+    // const MyApp(),
+    DevicePreview(
+      enabled: true, // Set to false to disable device preview
+      builder: (context) => const MyApp(), // Your app widget
+    ),
   );
 }
 

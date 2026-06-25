@@ -40,6 +40,9 @@ final class Endpoints {
   static String wisdomSave() => "/v1/wisdom/toggle-save";
   static String wisdomSaveList() => "/v1/wisdom/saved";
   static String deleteAccount() => "/user/delete-account";
+  static String updateFCMToken() => "/user/update-profile";
+  
+  
 
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 

@@ -8,6 +8,8 @@ import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
 
+import 'package:nick_me/services/firebase_notification_service.dart';
+
 import 'package:rxdart/rxdart.dart';
 import '../../../../../../networks/rx_base.dart';
 
@@ -19,7 +21,7 @@ final class LoginRx extends RxResponseInt<Map> {
   Future<bool> login({required String email, required String password}) async {
     try {
       final data = await api.login(email: email, password: password);
-      handleSuccessWithReturn(data);
+      await handleSuccessWithReturn(data);
       ToastUtil.showShortToast("Login successfuly");
 
       return true;
@@ -39,6 +41,7 @@ final class LoginRx extends RxResponseInt<Map> {
     }
     dataFetcher.sink.add(data);
     DioSingleton.instance.update(accessToken);
+    FirebaseNotificationService.updateFCMTokenToServer();
 
     return data;
 

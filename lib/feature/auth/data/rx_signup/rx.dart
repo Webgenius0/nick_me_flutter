@@ -8,6 +8,8 @@ import 'package:nick_me/networks/stream_cleaner.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
 
 
+import 'package:nick_me/services/firebase_notification_service.dart';
+
 import 'package:rxdart/rxdart.dart';
 import '../../../../../../networks/rx_base.dart';
 
@@ -36,7 +38,7 @@ final class SignUpRX extends RxResponseInt<Map> {
         dailyReminders: dailyReminders,
         termsAndConditions: termsAndConditions,
       );
-      handleSuccessWithReturn(data);
+      await handleSuccessWithReturn(data);
       return data['data']?['otp_token'] ?? data['otp_token'];
     } catch (error) {
       log('Error catch is here : ${error.toString()}');
@@ -54,6 +56,7 @@ final class SignUpRX extends RxResponseInt<Map> {
       await SecureStorage.saveToken(accessToken);
     }
     DioSingleton.instance.update(accessToken);
+    FirebaseNotificationService.updateFCMTokenToServer();
 
     dataFetcher.sink.add(data);
     return data;

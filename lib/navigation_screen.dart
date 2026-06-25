@@ -63,11 +63,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
       if (_currentIndex == 2) {
         getData();
       }
+      if (_currentIndex == 1) {
+        getDataForSaved();
+      }
     });
   }
 
   Future<void> getData() async {
-    Future.wait([getProfileDataRXObj.profileDataGet()]);
+    await Future.wait([getProfileDataRXObj.profileDataGet()]);
+  }
+
+  Future<void> getDataForSaved() async {
+    await Future.wait([getWisdomSaveListRxObj.getSavedWisdomList()]);
   }
 
   @override

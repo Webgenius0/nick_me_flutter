@@ -8,7 +8,6 @@ import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
 
-
 import 'package:rxdart/rxdart.dart';
 import '../../../../../../networks/rx_base.dart';
 
@@ -22,7 +21,7 @@ final class LogoutRx extends RxResponseInt<Map> {
     try {
       Map success = await api.logout();
       ToastUtil.showShortToast("Logout successful");
-      handleSuccessWithReturn(success);
+      await handleSuccessWithReturn(success);
       return true;
     } catch (error) {
       log('Logout Error   : ${error.toString()}');
