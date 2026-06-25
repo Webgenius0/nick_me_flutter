@@ -165,7 +165,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         color: AppColor.cFFFFFF.withValues(alpha: 0.1),
                         width: 2.w,
                       ),
-                      padding: EdgeInsets.all(12.0),
+                      padding: EdgeInsets.all(10.0),
                       margin: EdgeInsets.all(12.0),
                       leading: SvgPicture.asset(
                         AppIcons.profile,

@@ -1,5 +1,4 @@
 import 'package:auto_animated/auto_animated.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -66,11 +65,11 @@ void main() async {
     ),
   );
   runApp(
-    // const MyApp(),
-    DevicePreview(
-      enabled: true, // Set to false to disable device preview
-      builder: (context) => const MyApp(), // Your app widget
-    ),
+    const MyApp(),
+    // DevicePreview(
+    //   enabled: true, // Set to false to disable device preview
+    //   builder: (context) => const MyApp(), // Your app widget
+    // ),
   );
 }
 
