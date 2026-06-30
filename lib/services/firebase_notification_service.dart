@@ -19,7 +19,7 @@ class FirebaseNotificationService {
     log("Permission : ${settings.authorizationStatus}");
 
     String? token = await _messaging.getToken();
-
+  
     log("FCM TOKEN : $token");
     if (token != null) {
       _sendTokenToServer(token);
