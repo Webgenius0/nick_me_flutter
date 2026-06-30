@@ -41,8 +41,7 @@ final class Endpoints {
   static String wisdomSaveList() => "/v1/wisdom/saved";
   static String deleteAccount() => "/user/delete-account";
   static String updateFCMToken() => "/user/update-profile";
-  
-  
+  static String notificationData(String slug) => "/v1/wisdom/$slug";
 
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 

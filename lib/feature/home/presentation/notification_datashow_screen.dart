@@ -1,0 +1,174 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:nick_me/assets_helper/app_images.dart';
+import 'package:nick_me/common_widgets/custom_app_bar.dart';
+import 'package:nick_me/feature/home/widgets/ai_reflection_card.dart';
+import 'package:nick_me/feature/home/widgets/wisdom_action_button.dart';
+import 'package:nick_me/feature/home/widgets/wisdom_quote_card.dart';
+import 'package:nick_me/helpers/ui_helpers.dart';
+import 'package:nick_me/networks/api_acess.dart';
+import 'package:nick_me/assets_helper/app_fonts.dart';
+import 'package:nick_me/feature/home/model/wisdom_generate_model.dart';
+import 'package:nick_me/helpers/toast.dart';
+import 'package:nick_me/helpers/loding_indicator_widgets.dart';
+
+class NotificationDatashowScreen extends StatefulWidget {
+  const NotificationDatashowScreen({super.key});
+
+  @override
+  State<NotificationDatashowScreen> createState() =>
+      _NotificationDatashowScreenState();
+}
+
+class _NotificationDatashowScreenState
+    extends State<NotificationDatashowScreen> {
+  bool _isAiReflectionEnabled = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(AppImages.splashScreen),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10.h),
+                    CustomAppBar(),
+                    SizedBox(height: 30.h),
+                    StreamBuilder<WisdomGenerateModel>(
+                      stream: getNotificationDataRxObj.wisdom,
+                      initialData: getNotificationDataRxObj.wisdom.valueOrNull,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting &&
+                            !snapshot.hasData) {
+                          return SizedBox(
+                            height: 350.h,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+
+                        if (snapshot.hasError) {
+                          return SizedBox(
+                            height: 350.h,
+                            child: Center(
+                              child: Text(
+                                "Failed to generate wisdom. Please try again.",
+                                textAlign: TextAlign.center,
+                                style: TextFontStyle.textStyle14cFFFFFFInterW500
+                                    .copyWith(color: Colors.redAccent),
+                              ),
+                            ),
+                          );
+                        }
+
+                        final responseData = snapshot.data;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            WisdomQuoteCard(
+                              quote: responseData?.data?.wisdom?.stoic ?? "",
+                              author: responseData?.data?.author?.name ?? "",
+                              source: responseData?.data?.wisdom?.book ?? "",
+                            ),
+                            SizedBox(height: 20.h),
+                            AiReflectionCard(
+                              isEnabled: _isAiReflectionEnabled,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isAiReflectionEnabled = value;
+                                });
+                              },
+                              content:
+                                  responseData?.data?.reflection ??
+                                  "No AI reflection available.",
+                            ),
+                            UIHelper.verticalSpace(24.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                WisdomActionButton(
+                                  icon: (responseData?.data?.isSaved ?? false)
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  label: (responseData?.data?.isSaved ?? false)
+                                      ? "Saved"
+                                      : "Save",
+                                  onTap: () async {
+                                    final slug =
+                                        responseData?.data?.wisdom?.slug;
+                                    if (slug != null && slug.isNotEmpty) {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) =>
+                                            loadingIndicatorCircle(
+                                              context: context,
+                                            ),
+                                      );
+                                      bool success = await getSaveWisdomRxObj
+                                          .saveWisdom(stoicSlug: slug);
+                                      if (context.mounted) {
+                                        Navigator.of(
+                                          context,
+                                          rootNavigator: true,
+                                        ).pop();
+                                      }
+                                      if (success) {
+                                        final currentModel =
+                                            getNotificationDataRxObj
+                                                .wisdom
+                                                .valueOrNull;
+                                        if (currentModel != null &&
+                                            currentModel.data != null) {
+                                          currentModel.data!.isSaved =
+                                              !(currentModel.data!.isSaved ??
+                                                  false);
+                                          getNotificationDataRxObj
+                                              .handleSuccessWithReturn(
+                                                currentModel,
+                                              );
+                                        }
+                                      }
+                                    } else {
+                                      ToastUtil.showShortToast(
+                                        "No quote to save",
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    SizedBox(height: 30.h),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
