@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/api_acess.dart';
@@ -19,7 +18,7 @@ class FirebaseNotificationService {
     log("Permission : ${settings.authorizationStatus}");
 
     String? token = await _messaging.getToken();
-  
+
     log("FCM TOKEN : $token");
     if (token != null) {
       _sendTokenToServer(token);
@@ -35,7 +34,7 @@ class FirebaseNotificationService {
 
       if (message.notification != null) {
         LocalNotificationService.showNotification(
-          title: message.notification!.title ?? "", 
+          title: message.notification!.title ?? "",
           body: message.notification!.body ?? "",
         );
       }
@@ -65,7 +64,11 @@ class FirebaseNotificationService {
 
   static Future<void> _sendTokenToServer(String token) async {
     try {
-      final authHeader = DioSingleton.instance.dio.options.headers[NetworkConstants.AUTHORIZATION];
+      final authHeader = DioSingleton
+          .instance
+          .dio
+          .options
+          .headers[NetworkConstants.AUTHORIZATION];
       if (authHeader != null && authHeader.toString().isNotEmpty) {
         await getUpdateFCMTokenRxObj.updateFCMToken(fcmToken: token);
       }
