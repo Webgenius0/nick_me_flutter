@@ -29,7 +29,7 @@ final class SignupApi {
         "daily_reminders": dailyReminders ? 1 : 0,
         "terms_and_conditions": termsAndConditions ? 1 : 0,
       });
-      Response response = await postHttp(Endpoints.register(), data);
+      Response response = await postHttp(Endpoints.register(), data); 
       String? token = await SecureStorage.getToken();
       DioSingleton.instance.update(token);
       if (response.statusCode == 200 || response.statusCode == 201) {

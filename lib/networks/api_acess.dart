@@ -5,6 +5,7 @@ import 'package:nick_me/feature/auth/data/rx_resend_otp/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_reset_password/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_signup/rx.dart';
 import 'package:nick_me/feature/auth/data/rx_otp_verify_signup/rx.dart';
+import 'package:nick_me/feature/auth/data/rx_fcm_update/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_change_password/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_privacy_policy/rx.dart';
 import 'package:nick_me/feature/profile/data/rx_profile_data_get/rx.dart';
@@ -100,6 +101,11 @@ WisdomSaveListRx getWisdomSaveListRxObj = WisdomSaveListRx(
 );
 
 DeleteAccountRx getDeleteAccountRxObj = DeleteAccountRx(
+  empty: {},
+  dataFetcher: BehaviorSubject<Map>(),
+);
+
+UpdateFCMTokenRx getUpdateFCMTokenRxObj = UpdateFCMTokenRx(
   empty: {},
   dataFetcher: BehaviorSubject<Map>(),
 );

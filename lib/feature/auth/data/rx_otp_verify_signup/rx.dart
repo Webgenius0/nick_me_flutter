@@ -6,6 +6,7 @@ import 'package:nick_me/helpers/di.dart';
 import 'package:nick_me/networks/dio/dio.dart';
 import 'package:nick_me/networks/stream_cleaner.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
+import 'package:nick_me/services/firebase_notification_service.dart';
 import '../../../../../../networks/rx_base.dart';
 
 
@@ -28,7 +29,7 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
         otp: otp,
         otpToken: otpToken,
       );
-      handleSuccessWithReturn(data);
+      await handleSuccessWithReturn(data);
       return data['data']?['reset_token'] ??
           data['data']?['access_token'] ??
           data['access_token'] ??
@@ -47,6 +48,7 @@ final class EmailVerifySignUpRx extends RxResponseInt<Map> {
       await appData.write(kKeyIsLoggedIn, true);
       await SecureStorage.saveToken(accessToken);
       DioSingleton.instance.update(accessToken);
+      FirebaseNotificationService.updateFCMTokenToServer();
     }
     dataFetcher.sink.add(data);
     return data;

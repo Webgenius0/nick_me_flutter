@@ -63,11 +63,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
       if (_currentIndex == 2) {
         getData();
       }
+      if (_currentIndex == 1) {
+        getDataForSaved();
+      }
     });
   }
 
   Future<void> getData() async {
-    Future.wait([getProfileDataRXObj.profileDataGet()]);
+    await Future.wait([getProfileDataRXObj.profileDataGet()]);
+  }
+
+  Future<void> getDataForSaved() async {
+    await Future.wait([getWisdomSaveListRxObj.getSavedWisdomList()]);
   }
 
   @override
@@ -158,7 +165,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         color: AppColor.cFFFFFF.withValues(alpha: 0.1),
                         width: 2.w,
                       ),
-                      padding: EdgeInsets.all(12.0),
+                      padding: EdgeInsets.all(10.0),
                       margin: EdgeInsets.all(12.0),
                       leading: SvgPicture.asset(
                         AppIcons.profile,

@@ -15,7 +15,7 @@ final class PrivacyPolicyRX extends RxResponseInt<PrivacyPolicyModel> {
     try {
       PrivacyPolicyModel data = await api.getPrivacyPolicy();
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Privacy Policy Fetched successfully');
+      // ToastUtil.showShortToast('Privacy Policy Fetched successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);

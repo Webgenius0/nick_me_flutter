@@ -6,6 +6,7 @@ import 'package:nick_me/helpers/helper_methods.dart';
 import 'package:nick_me/navigation_screen.dart';
 import 'package:nick_me/splash_screen.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
+import 'package:nick_me/services/firebase_notification_service.dart';
 
 final class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -29,6 +30,9 @@ class _LoadingState extends State<Loading> {
     await setInitValue();
     String? token = await SecureStorage.getToken();
     _isLoggedIn = token != null && token.isNotEmpty;
+    if (_isLoggedIn) {
+      FirebaseNotificationService.updateFCMTokenToServer();
+    }
     setState(() {
       _isLoading = false;
     });

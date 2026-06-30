@@ -22,7 +22,7 @@ final class WisdomGenerateRx extends RxResponseInt<WisdomGenerateModel> {
         prompt: prompt,
       );
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Wisdom generated successfully');
+      // ToastUtil.showShortToast('Wisdom generated successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);
@@ -34,11 +34,15 @@ final class WisdomGenerateRx extends RxResponseInt<WisdomGenerateModel> {
     if (error is DioException) {
       if (error.response?.statusCode == 400) {
         ToastUtil.showShortToast(
-          error.response?.data["error"] ?? error.message,
+          error.response?.data["message"] ?? error.message,
+        );
+      } else if (error.response?.statusCode == 422) {
+        ToastUtil.showShortToast(
+          error.response?.data["message"] ?? error.message,
         );
       } else {
         ToastUtil.showShortToast(
-          error.response?.data["error"] ?? error.message,
+          error.response?.data["message"] ?? error.message,
         );
       }
     }

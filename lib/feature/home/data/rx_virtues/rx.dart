@@ -16,7 +16,7 @@ final class VirtuesRx extends RxResponseInt<VirtuesModel> {
     try {
       VirtuesModel data = await api.getVirtues();
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Virtues fetched successfully');
+      // ToastUtil.showShortToast('Virtues fetched successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);
@@ -27,9 +27,13 @@ final class VirtuesRx extends RxResponseInt<VirtuesModel> {
   handleErrorWithReturn(dynamic error) {
     if (error is DioException) {
       if (error.response?.statusCode == 400) {
-        ToastUtil.showShortToast(error.response?.data["error"] ?? error.message);
+        ToastUtil.showShortToast(
+          error.response?.data["error"] ?? error.message,
+        );
       } else {
-        ToastUtil.showShortToast(error.response?.data["error"] ?? error.message);
+        ToastUtil.showShortToast(
+          error.response?.data["error"] ?? error.message,
+        );
       }
     }
     log(error.toString());

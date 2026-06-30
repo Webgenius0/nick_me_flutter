@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:nick_me/loading.dart';
+import 'package:nick_me/services/firebase_notification_service.dart';
+import 'package:nick_me/services/local_notification_service.dart';
 import 'package:provider/provider.dart';
 import '/helpers/all_routes.dart';
 import 'helpers/di.dart';
@@ -15,15 +17,21 @@ import 'networks/dio/dio.dart';
 import 'package:nick_me/constants/update_customer.dart';
 import 'package:nick_me/helpers/secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:developer';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   await Hive.initFlutter();
-  await Hive.openBox<String>('termsCache'); 
+  await Hive.openBox<String>('termsCache');
   await Hive.openBox<String>('privacyPolicyCache');
   await Hive.openBox<String>('wisdomAuthorsCache');
   await Hive.openBox<String>('virtuesCache');
@@ -36,7 +44,17 @@ void main() async {
     DioSingleton.instance.update(token);
   } else {
     DioSingleton.instance.create();
-  } 
+  }
+
+  await LocalNotificationService.initialize();
+  await FirebaseNotificationService.initialize();
+  try {
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .requestPermission(alert: true, badge: true, sound: true);
+    log("Permission: ${settings.authorizationStatus}");
+  } catch (e) {
+    log("Error requesting notification permissions: $e");
+  }
 
   // Set status bar color
   SystemChrome.setSystemUIOverlayStyle(

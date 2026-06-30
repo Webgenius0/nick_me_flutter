@@ -16,7 +16,7 @@ final class TermsAndConditionRX extends RxResponseInt<TermsPrivacyPolicyModel> {
     try {
       TermsPrivacyPolicyModel data = await api.getTermsPrivacyPolicy();
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast('Terms and Conditions fetched successfully');
+      // ToastUtil.showShortToast('Terms and Conditions fetched successfully');
       return true;
     } catch (error) {
       return handleErrorWithReturn(error);

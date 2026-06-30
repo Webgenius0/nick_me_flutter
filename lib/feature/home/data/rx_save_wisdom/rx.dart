@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:nick_me/feature/home/data/rx_save_wisdom/api.dart';
-import 'package:nick_me/helpers/toast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:nick_me/networks/rx_base.dart';
 
@@ -16,7 +15,7 @@ final class SaveWisdomRx extends RxResponseInt<Map> {
     try {
       final data = await api.saveWisdom(stoicSlug: stoicSlug);
       handleSuccessWithReturn(data);
-      ToastUtil.showShortToast(data['message'] ?? "Wisdom saved successfully");
+      // ToastUtil.showShortToast(data['message'] ?? "Wisdom saved successfully");
       return true;
     } catch (error) {
       log('Error catch is here : ${error.toString()}');
