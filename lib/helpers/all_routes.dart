@@ -14,6 +14,7 @@ import 'package:nick_me/feature/profile/presentation/help_and_support_screen.dar
 import 'package:nick_me/feature/profile/presentation/privacy_policy_screen.dart';
 import 'package:nick_me/feature/profile/presentation/subscription_screen.dart';
 import 'package:nick_me/feature/profile/presentation/terms_and_conditions.dart';
+import 'package:nick_me/feature/home/presentation/notification_datashow_screen.dart';
 import 'package:nick_me/navigation_screen.dart';
 
 final class Routes {
@@ -34,6 +35,7 @@ final class Routes {
   static const String termsAndConditions = '/termsAndConditions';
   static const String helpAndSupportScreen = '/helpAndSupportScreen';
   static const String changePasswordScreen = '/changePasswordScreen';
+  static const String notificationDatashowScreen = '/notificationDatashowScreen';
 }
 
 final class RouteGenerator {
@@ -131,6 +133,16 @@ final class RouteGenerator {
               )
             : CupertinoPageRoute(
                 builder: (context) => const GenerateWisdomScreen(),
+              );
+
+      case Routes.notificationDatashowScreen:
+        return Platform.isAndroid
+            ? _FadedTransitionRoute(
+                widget: const NotificationDatashowScreen(),
+                settings: settings,
+              )
+            : CupertinoPageRoute(
+                builder: (context) => const NotificationDatashowScreen(),
               );
 
       case Routes.editProfileScreen:

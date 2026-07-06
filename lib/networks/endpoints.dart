@@ -11,7 +11,7 @@ final class NetworkConstants {
   static const APP_KEY_VALUE = String.fromEnvironment("APP_KEY_VALUE");
   static const ACCEPT_TYPE = "application/json";
   static const AUTHORIZATION = "Authorization";
-  static const CONTENT_TYPE = "content-Type";
+  static const CONTENT_TYPE = "content-Type"; 
 }
 
 // final class PaymentGateway {
@@ -41,15 +41,14 @@ final class Endpoints {
   static String wisdomSaveList() => "/v1/wisdom/saved";
   static String deleteAccount() => "/user/delete-account";
   static String updateFCMToken() => "/user/update-profile";
-  
-  
+  static String notificationData(String slug) => "/v1/wisdom/$slug";
 
   // static String emailOtpForgetPass() => "/auth/verify-otp";
 
   static String destinationsList({
     int? perPage,
     String? search,
-    String? country,
+    String? country, 
     int? page,
   }) {
     String endpoint = "/destinations";

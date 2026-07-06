@@ -36,6 +36,12 @@ class _LoadingState extends State<Loading> {
     setState(() {
       _isLoading = false;
     });
+    if (FirebaseNotificationService.openedFromNotification) {
+      FirebaseNotificationService.openedFromNotification = false;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        FirebaseNotificationService.fetchAndNavigate();
+      });
+    }
   }
 
   @override
