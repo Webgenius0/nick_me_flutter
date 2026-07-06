@@ -11,7 +11,7 @@ final class NetworkConstants {
   static const APP_KEY_VALUE = String.fromEnvironment("APP_KEY_VALUE");
   static const ACCEPT_TYPE = "application/json";
   static const AUTHORIZATION = "Authorization";
-  static const CONTENT_TYPE = "content-Type";
+  static const CONTENT_TYPE = "content-Type"; 
 }
 
 // final class PaymentGateway {
@@ -48,7 +48,7 @@ final class Endpoints {
   static String destinationsList({
     int? perPage,
     String? search,
-    String? country,
+    String? country, 
     int? page,
   }) {
     String endpoint = "/destinations";
